@@ -1,0 +1,7 @@
+interface:
+  display_name: "Project Architectural Report"
+  short_description: "Generate architecture and dependency reports"
+  default_prompt: "Use $project-architectural-report to generate a complete read-only architectural report for this project."
+
+policy:
+  allow_implicit_invocation: true
