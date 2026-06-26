@@ -22,6 +22,7 @@ Aplicar as tarefas de refatoracao:
 ## Entradas
 
 - lista de tarefas;
+- plano de refatoracao com matriz de cobertura;
 - relatorio aprovado;
 - guidelines MVC;
 - playbook;
@@ -40,11 +41,16 @@ Aplicar as tarefas de refatoracao:
 - Depois de cada tarefa, registrar arquivos alterados, validacao e status `COMPLETED`, `FAILED` ou `SKIPPED`.
 - Se uma validacao falhar, nao seguir para a proxima tarefa sem registrar a falha e corrigir ou bloquear.
 - Preservar comandos de boot e scripts existentes, salvo mudanca explicitamente planejada.
+- Implementar somente tarefas listadas em `refactor-tasks.md`; se detectar uma mudanca necessaria fora da tarefa, registrar em `STATE.md` e criar/solicitar uma tarefa antes de prosseguir.
+- Antes de editar, confirmar que a tarefa referencia uma etapa `Pxx`, findings cobertos, arquivos esperados, criterio de aceite e validacao.
+- Nao marcar uma tarefa como `COMPLETED` se ela nao executar ou justificar a validacao definida.
+- Ao corrigir um finding, atualizar a cobertura no `STATE.md` com a tarefa e validacao correspondente.
 
 ## Saida
 
 Ao concluir cada tarefa, retornar:
 
+- ID da tarefa e etapa do plano;
 - arquivos alterados;
 - findings tratados;
 - observacoes de compatibilidade;
@@ -55,10 +61,25 @@ Ao concluir cada tarefa, retornar:
 
 1. Ler `STATE.md` e selecionar a primeira tarefa `PENDING` ou `FAILED`.
 2. Confirmar que `Source modifications allowed: YES`.
-3. Marcar tarefa como `IN_PROGRESS`.
-4. Ler tarefa atual e arquivos afetados.
-5. Aplicar mudanca minima.
-6. Ajustar imports/exports/registro de rotas.
-7. Rodar validacao local possivel.
-8. Atualizar `STATE.md` com resultado, arquivos e proximo passo.
-9. Seguir para a proxima tarefa somente se a atual estiver `COMPLETED` ou `SKIPPED` com justificativa.
+3. Ler `refactor-plan.md`, `refactor-tasks.md`, guidelines e playbook.
+4. Conferir se a tarefa tem etapa do plano, findings, arquivos, criterio de aceite e validacao. Se faltar informacao, marcar `BLOCKED` ou pedir complementacao.
+5. Marcar tarefa como `IN_PROGRESS`.
+6. Ler arquivos afetados e confirmar que nao ha mudancas do usuario conflitantes.
+7. Aplicar mudanca minima.
+8. Ajustar imports/exports/registro de rotas.
+9. Rodar a validacao definida pela tarefa ou registrar por que ela nao pode ser executada.
+10. Atualizar `STATE.md` com resultado, arquivos, coverage e proximo passo.
+11. Seguir para a proxima tarefa somente se a atual estiver `COMPLETED` ou `SKIPPED` com justificativa.
+
+## Regra De Qualidade MVC
+
+Ao implementar, valide mentalmente cada alteracao contra estas perguntas:
+
+- A rota/view ficou fina e sem regra de negocio?
+- O controller coordena fluxo sem SQL direto?
+- O service concentra regra de negocio e transacoes compostas?
+- O model/repository isola persistencia e DTO seguro?
+- Configuracao sensivel saiu do codigo?
+- Error handling ficou centralizado?
+- O endpoint original manteve metodo, path, status esperado e payload essencial?
+- O finding associado ficou realmente removido ou mitigado?

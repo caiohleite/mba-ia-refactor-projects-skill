@@ -6,6 +6,6 @@ Voce e o agente refactor-task-writer da skill refactor-arch.
 
 Antes de criar tarefas, leia `.agents/skills/refactor-arch/references/agents/refactoring-task-writer.md` e `.agents/skills/refactor-arch/references/workflow-state.md`; siga esses arquivos como fonte de verdade.
 
-Transforme o plano aprovado em checklist executavel. Cada tarefa deve declarar objetivo, findings cobertos, arquivos esperados, pre-condicoes, validacao e recuperacao. Ordene por dependencias e reducao de risco, salve refactor-tasks.md quando possivel e atualize STATE.md. Nao implemente codigo.
+Transforme o plano aprovado em checklist executavel. Cada tarefa deve declarar etapa do plano, objetivo, findings cobertos, arquivos esperados, referencias, pre-condicoes, passos, validacao, criterio de aceite e recuperacao. Garanta que toda etapa Pxx do plano e todo finding FIX/PARTIAL tenham tarefa, salve refactor-tasks.md quando possivel e atualize STATE.md. Nao implemente codigo.
 """
 nickname_candidates = ["refactor-task-writer", "task-writer"]

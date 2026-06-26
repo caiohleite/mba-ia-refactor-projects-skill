@@ -116,22 +116,24 @@ Se a resposta nao for afirmativa e explicita, encerre sem modificar o projeto.
 Execute esta fase somente apos confirmacao.
 
 1. Leia `references/mvc-guidelines.md`, `references/refactoring-playbook.md`, `references/validation-checklist.md`, `references/workflow-state.md` e os perfis `refactoring-planner`, `refactoring-task-writer`, `mvc-refactor-implementer` e `refactoring-validator`.
-2. Gere um plano de refatoracao baseado nos findings aprovados e na arquitetura alvo.
+2. Gere um plano de refatoracao baseado nos findings aprovados e na arquitetura alvo. O plano deve conter uma matriz de cobertura ligando cada finding do relatorio a uma decisao: `FIX`, `PARTIAL`, `DEFER`, `ACCEPT_RISK` ou `NOT_APPLICABLE`, sempre com justificativa.
 3. Salve o plano em `reports-folder/.refactor-arch/refactor-plan.md` e atualize `STATE.md`.
-4. Quebre o plano em tarefas pequenas, ordenadas por menor risco: configuracao, models/repositories, controllers/services, routes/views, middlewares, bootstrap e validacao.
-5. Salve as tarefas em `reports-folder/.refactor-arch/refactor-tasks.md` e espelhe seus status no `STATE.md`.
-6. Implemente uma tarefa por vez, marcando `IN_PROGRESS` antes de editar e `COMPLETED`, `FAILED` ou `SKIPPED` apos validar.
-7. Verifique imports, caminhos, inicializacao, contrato dos endpoints originais e compatibilidade dos payloads/respostas.
-8. Extraia configuracao sensivel para variaveis de ambiente ou modulo de configuracao com defaults seguros para desenvolvimento.
-9. Separe responsabilidades:
+4. Nao avance para tarefas enquanto houver finding aprovado sem decisao, sem tarefa associada ou sem justificativa explicita.
+5. Quebre o plano em tarefas pequenas, ordenadas por menor risco: configuracao, models/repositories, controllers/services, routes/views, middlewares, bootstrap e validacao.
+6. Cada tarefa deve apontar quais etapas do plano e quais findings cobre, quais arquivos provavelmente altera, quais referencias usar, criterio de aceite e validacao local.
+7. Salve as tarefas em `reports-folder/.refactor-arch/refactor-tasks.md` e espelhe seus status no `STATE.md`.
+8. Implemente uma tarefa por vez, marcando `IN_PROGRESS` antes de editar e `COMPLETED`, `FAILED` ou `SKIPPED` apos validar.
+9. Verifique imports, caminhos, inicializacao, contrato dos endpoints originais e compatibilidade dos payloads/respostas.
+10. Extraia configuracao sensivel para variaveis de ambiente ou modulo de configuracao com defaults seguros para desenvolvimento.
+11. Separe responsabilidades:
    - Models representam dados, schemas e persistencia.
    - Views/Routes expoem HTTP e serializacao.
    - Controllers coordenam fluxo de caso de uso.
    - Services concentram regras de negocio quando o dominio exigir.
    - Middlewares tratam erros, auth, logging e concerns transversais.
-10. Valide boot da aplicacao, endpoints originais e reducao dos anti-patterns encontrados.
-11. Salve `reports-folder/.refactor-arch/validation-report.md` e atualize `STATE.md`.
-12. Gere um resumo final com nova estrutura, comandos executados e limitacoes.
+12. Valide boot da aplicacao, endpoints originais, reducao dos anti-patterns encontrados e cobertura final de todos os findings.
+13. Salve `reports-folder/.refactor-arch/validation-report.md` e atualize `STATE.md`.
+14. Gere um resumo final com nova estrutura, comandos executados e limitacoes.
 
 ## Recuperacao
 

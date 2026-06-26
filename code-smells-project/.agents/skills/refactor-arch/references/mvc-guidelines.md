@@ -85,6 +85,18 @@ Variacoes aceitaveis:
 - Usar DTOs/serializers seguros para nao vazar senha, token, cartao ou segredo.
 - Garantir rollback/commit consistente em transacoes.
 
+## Barra De Qualidade Arquitetural
+
+Use estes criterios para avaliar se o plano MVC esta maduro o suficiente antes de implementar:
+
+- **Rastreabilidade**: todo finding aprovado deve estar associado a decisao, etapa, tarefa e validacao.
+- **Coesao por dominio**: produtos, usuarios, pedidos, checkout, payments, tasks ou categorias devem ter boundaries claros.
+- **Dependencias direcionais**: routes/views dependem de controllers; controllers dependem de services; services dependem de repositories/models; repositories conhecem persistencia. Camadas inferiores nao devem importar HTTP.
+- **Composition root claro**: inicializacao de app, banco, middlewares e rotas deve ficar em um ponto previsivel.
+- **Contratos preservados**: metodos, paths, payloads essenciais, status codes e comandos de boot devem ser preservados salvo decisao aprovada.
+- **Seguranca por padrao**: segredos, senhas, tokens, cartoes e erros internos nao devem aparecer em respostas, logs ou DTOs publicos.
+- **Validade operacional**: cada etapa deve deixar o projeto em estado executavel ou declarar checkpoint/risco.
+
 ## Definition Of Done MVC
 
 - Entry point claro e pequeno.
@@ -95,3 +107,4 @@ Variacoes aceitaveis:
 - Error handler central cobre erros comuns.
 - Endpoints originais continuam respondendo.
 - Findings CRITICAL/HIGH tratados ou documentados com justificativa.
+- Todos os findings `FIX` ou `PARTIAL` possuem validacao registrada.

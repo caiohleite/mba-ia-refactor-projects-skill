@@ -58,10 +58,15 @@ Last updated: [YYYY-MM-DD HH:MM:SS]
 - MEDIUM: [N]
 - LOW: [N]
 
+## Findings Coverage
+| Finding ID | Severity | Decision | Plan Step | Task IDs | Validation | Notes |
+|---|---|---|---|---|---|---|
+| AP-XX | HIGH | FIX | P02 | T03,T04 | smoke/test/check | notes |
+
 ## Refactoring Tasks
-| ID | Status | Finding IDs | Files | Validation | Notes |
-|---|---|---|---|---|---|
-| T01 | PENDING | AP-XX | path | command/check | notes |
+| ID | Status | Plan Step | Finding IDs | Files | Validation | Notes |
+|---|---|---|---|---|---|---|
+| T01 | PENDING | P01 | AP-XX | path | command/check | notes |
 
 ## Endpoint Contract
 | Method | Path | Purpose | Source | Status |
@@ -105,11 +110,12 @@ Last updated: [YYYY-MM-DD HH:MM:SS]
 
 1. Ao receber confirmacao, registrar `Human confirmation for Phase 3: APPROVED` e `Source modifications allowed: YES`.
 2. Salvar plano em `refactor-plan.md`.
-3. Salvar tarefas em `refactor-tasks.md` e espelhar a tabela no `STATE.md`.
-4. Antes de cada tarefa, marcar `IN_PROGRESS`.
-5. Apos cada tarefa, registrar arquivos alterados, validacao executada e status.
-6. Em falha, marcar `FAILED`, registrar erro e decidir se corrige, pula com justificativa ou bloqueia.
-7. Salvar validacao final em `validation-report.md`.
+3. Registrar em `Findings Coverage` uma decisao para cada finding aprovado do relatorio.
+4. Salvar tarefas em `refactor-tasks.md` e espelhar a tabela no `STATE.md`.
+5. Antes de cada tarefa, marcar `IN_PROGRESS`.
+6. Apos cada tarefa, registrar arquivos alterados, validacao executada e status.
+7. Em falha, marcar `FAILED`, registrar erro e decidir se corrige, pula com justificativa ou bloqueia.
+8. Salvar validacao final em `validation-report.md`.
 
 ## Retomada
 

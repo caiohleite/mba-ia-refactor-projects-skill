@@ -218,3 +218,25 @@ Regra: trocar APIs deprecated quando a versao da stack confirmar suporte ao equi
 6. Otimizar N+1 e duplicacoes.
 7. Modernizar deprecated APIs.
 8. Rodar validacao completa.
+
+## Mapeamento De Anti-Patterns Para Transformacoes
+
+Use esta tabela para montar a matriz de cobertura do plano:
+
+| Anti-pattern | Padroes principais | Observacoes |
+|---|---|---|
+| AP-01 SQL Injection | 2, 4 | Corrigir antes de mover grandes blocos quando houver input externo ativo |
+| AP-02 Segredos hardcoded | 1, 7 | Remover de codigo, respostas e logs |
+| AP-03 Endpoint administrativo sem protecao | 3, 8 | Exigir auth/autorizacao ou remover recurso perigoso com aprovacao |
+| AP-04 God class/file/method | 3, 4, 8 | Dividir por dominio e por camada |
+| AP-05 Regra pesada em route/controller | 3, 4, 9 | Extrair use cases/services e validadores |
+| AP-06 Persistencia misturada com dominio | 2, 4 | Introduzir repositories/data access e transacoes explicitas |
+| AP-07 Criptografia/senha insegura | 6, 7 | Migrar hash e DTO com cuidado para nao quebrar login |
+| AP-08 Vazamento de dados sensiveis | 1, 7, 8 | Criar DTO publico e sanitizar logs/erros |
+| AP-09 N+1 queries | 5 | Trocar loops com query por join/eager loading/lote |
+| AP-10 Estado global mutavel | 1, 4 | Encapsular ciclo de vida e injetar dependencias |
+| AP-11 Validacao espalhada | 9 | Centralizar constantes, schemas ou validadores |
+| AP-12 Error handling inconsistente | 8 | Mapear erros de dominio e infraestrutura |
+| AP-13 APIs deprecated | 10 | Modernizar em etapa isolada e validar versao da stack |
+| AP-14 Nomes obscuros/magic values | 9 | Corrigir junto da camada tocada, evitando refactor cosmetico amplo |
+| AP-15 Imports mortos/residuos | 8, 9 | Limpar no final para reduzir risco |
