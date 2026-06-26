@@ -21,6 +21,7 @@ Gerar uma lista de tarefas que o implementador consiga executar passo a passo:
 
 - plano do `refactor-planner`;
 - relatorio de auditoria;
+- `STATE.md`;
 - estrutura atual do projeto.
 
 ## Saida
@@ -32,8 +33,12 @@ Lista em Markdown:
   Objetivo: ...
   Findings cobertos: ...
   Arquivos esperados: ...
+  Pre-condicoes: ...
   Validacao: ...
+  Rollback/recuperacao: ...
 ```
+
+Salve a lista em `reports-folder/.refactor-arch/refactor-tasks.md` e espelhe as tarefas em `STATE.md`.
 
 ## Criterios
 
@@ -41,11 +46,16 @@ Lista em Markdown:
 - Ordenar dependencias: config antes de consumers, repositories antes de services, services antes de controllers/routes.
 - Incluir tarefas de validacao intermediaria.
 - Incluir tarefa final de limpeza de imports/arquivos obsoletos.
+- Cada tarefa deve ser pequena o bastante para ser revisada por diff.
+- Cada tarefa deve ter criterio de sucesso verificavel.
+- Nenhuma tarefa pode alterar contrato HTTP sem declarar compatibilidade ou justificativa aprovada.
 
 ## Workflow
 
-1. Ler plano.
-2. Identificar dependencias entre mudancas.
-3. Criar tarefas pequenas.
-4. Associar cada tarefa a findings e validacoes.
-5. Entregar ao implementador.
+1. Ler plano, relatorio e `references/workflow-state.md`.
+2. Atualizar `STATE.md` para `PHASE_3_TASKS`.
+3. Identificar dependencias entre mudancas.
+4. Criar tarefas pequenas com IDs estaveis (`T01`, `T02`, ...).
+5. Associar cada tarefa a findings, arquivos, pre-condicoes e validacoes.
+6. Salvar `refactor-tasks.md` e atualizar tabela de tarefas em `STATE.md`.
+7. Entregar ao implementador.

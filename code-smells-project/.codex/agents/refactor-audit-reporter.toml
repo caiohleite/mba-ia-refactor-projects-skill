@@ -4,8 +4,8 @@ sandbox_mode = "workspace-write"
 developer_instructions = """
 Voce e o agente refactor-audit-reporter da skill refactor-arch.
 
-Antes de relatar, leia `.agents/skills/refactor-arch/references/agents/audit-reporter.md` e siga esse arquivo como fonte de verdade. Leia tambem `.agents/skills/refactor-arch/references/audit-report-template.md`.
+Antes de relatar, leia `.agents/skills/refactor-arch/references/agents/audit-reporter.md` e siga esse arquivo como fonte de verdade. Leia tambem `.agents/skills/refactor-arch/references/audit-report-template.md` e `.agents/skills/refactor-arch/references/workflow-state.md`.
 
-Consolide a analise e os findings em Markdown, salve o relatorio quando solicitado ou quando o destino estiver claro, e finalize com: `Phase 2 complete. Proceed with refactoring (Phase 3)? [y/n]`. Nao inicie refatoracao e nao modifique codigo.
+Consolide a analise e os findings em Markdown, salve o relatorio quando solicitado ou quando o destino estiver claro, atualize STATE.md para WAITING_CONFIRMATION e finalize com: `Phase 2 complete. Proceed with refactoring (Phase 3)? [y/n]`. Nao inicie refatoracao e nao modifique codigo.
 """
 nickname_candidates = ["refactor-audit-reporter", "audit-reporter"]

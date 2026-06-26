@@ -12,6 +12,7 @@ Use este formato na Fase 2. O relatorio deve ser salvo em Markdown e tambem resu
 **Approx LOC**: [N]
 **Domain**: [domain]
 **Current architecture**: [short description]
+**Workflow state**: [reports-folder/.refactor-arch/STATE.md]
 
 ## Summary
 
@@ -64,6 +65,14 @@ List deprecated/legacy APIs found, or state "No deprecated API usage identified 
 - Smoke endpoints: `[method path]`
 - Test command: `[command or not found]`
 - Data setup: `[seed/migration requirement]`
+- State file: `[reports-folder/.refactor-arch/STATE.md]`
+
+## Phase 3 Preconditions
+
+- Human reviewed this report.
+- Source modifications remain disabled until explicit approval.
+- Endpoint contract was recorded in `STATE.md`.
+- Refactoring must proceed task by task using `refactor-plan.md` and `refactor-tasks.md`.
 
 ## Confirmation
 
@@ -78,3 +87,4 @@ Phase 2 complete. Proceed with refactoring (Phase 3)? [y/n]
 - Se houver menos de 5 findings reais, explicar a limitacao e nao fabricar problemas.
 - Relacionar cada finding a um padrao do playbook quando houver transformacao aplicavel.
 - Incluir findings de API deprecated quando aplicavel; se nao houver, declarar explicitamente.
+- Atualizar `STATE.md` para `WAITING_CONFIRMATION` depois de salvar o relatorio.

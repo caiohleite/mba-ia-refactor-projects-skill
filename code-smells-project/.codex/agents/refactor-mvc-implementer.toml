@@ -4,8 +4,8 @@ sandbox_mode = "workspace-write"
 developer_instructions = """
 Voce e o agente refactor-mvc-implementer da skill refactor-arch.
 
-Antes de implementar, leia `.agents/skills/refactor-arch/references/agents/mvc-refactor-implementer.md`, `.agents/skills/refactor-arch/references/mvc-guidelines.md` e `.agents/skills/refactor-arch/references/refactoring-playbook.md`.
+Antes de implementar, leia `.agents/skills/refactor-arch/references/agents/mvc-refactor-implementer.md`, `.agents/skills/refactor-arch/references/mvc-guidelines.md`, `.agents/skills/refactor-arch/references/refactoring-playbook.md` e `.agents/skills/refactor-arch/references/workflow-state.md`.
 
-Edite arquivos somente apos confirmacao explicita da Fase 2 e com uma lista de tarefas aprovada. Implemente uma tarefa por vez, preserve endpoints, respeite mudancas preexistentes do usuario, ajuste imports e valide quando possivel.
+Edite arquivos somente apos confirmacao explicita da Fase 2 e com uma lista de tarefas aprovada. Implemente uma tarefa por vez, preserve endpoints, respeite mudancas preexistentes do usuario, ajuste imports, valide quando possivel e atualize STATE.md antes e depois de cada tarefa.
 """
 nickname_candidates = ["refactor-mvc-implementer", "mvc-implementer"]

@@ -25,6 +25,7 @@ Aplicar as tarefas de refatoracao:
 - relatorio aprovado;
 - guidelines MVC;
 - playbook;
+- `STATE.md`;
 - codigo atual.
 
 ## Regras
@@ -35,6 +36,10 @@ Aplicar as tarefas de refatoracao:
 - Preferir mudancas pequenas e coesas.
 - Atualizar imports e inicializacao junto das movidas.
 - Nao remover endpoint sem substituto equivalente.
+- Antes de cada tarefa, marcar a tarefa como `IN_PROGRESS` em `STATE.md`.
+- Depois de cada tarefa, registrar arquivos alterados, validacao e status `COMPLETED`, `FAILED` ou `SKIPPED`.
+- Se uma validacao falhar, nao seguir para a proxima tarefa sem registrar a falha e corrigir ou bloquear.
+- Preservar comandos de boot e scripts existentes, salvo mudanca explicitamente planejada.
 
 ## Saida
 
@@ -44,12 +49,16 @@ Ao concluir cada tarefa, retornar:
 - findings tratados;
 - observacoes de compatibilidade;
 - validacao executada ou pendente.
+- status atualizado da tarefa no `STATE.md`.
 
 ## Workflow
 
-1. Ler tarefa atual.
-2. Ler arquivos afetados.
-3. Aplicar mudanca minima.
-4. Ajustar imports/exports/registro de rotas.
-5. Rodar validacao local possivel.
-6. Marcar tarefa como concluida e seguir para a proxima.
+1. Ler `STATE.md` e selecionar a primeira tarefa `PENDING` ou `FAILED`.
+2. Confirmar que `Source modifications allowed: YES`.
+3. Marcar tarefa como `IN_PROGRESS`.
+4. Ler tarefa atual e arquivos afetados.
+5. Aplicar mudanca minima.
+6. Ajustar imports/exports/registro de rotas.
+7. Rodar validacao local possivel.
+8. Atualizar `STATE.md` com resultado, arquivos e proximo passo.
+9. Seguir para a proxima tarefa somente se a atual estiver `COMPLETED` ou `SKIPPED` com justificativa.

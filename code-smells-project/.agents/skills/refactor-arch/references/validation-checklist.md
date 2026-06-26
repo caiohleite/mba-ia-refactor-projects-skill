@@ -46,6 +46,45 @@ Conferir:
 - error handler central esta registrado;
 - imports antigos e arquivos mortos nao quebram boot.
 
+## Checklist Obrigatorio Do README
+
+### Fase 1 - Analise
+
+- [ ] Linguagem detectada corretamente.
+- [ ] Framework detectado corretamente.
+- [ ] Dominio da aplicacao descrito corretamente.
+- [ ] Numero de arquivos analisados condiz com a realidade.
+
+### Fase 2 - Auditoria
+
+- [ ] Relatorio segue o template definido nos arquivos de referencia.
+- [ ] Cada finding tem arquivo e linhas exatos quando aplicavel.
+- [ ] Findings ordenados por severidade (`CRITICAL` -> `LOW`).
+- [ ] Minimo de 5 findings identificados quando houver evidencia suficiente.
+- [ ] Deteccao de APIs deprecated incluida quando aplicavel.
+- [ ] Skill pausou e pediu confirmacao antes da Fase 3.
+
+### Fase 3 - Refatoracao
+
+- [ ] Estrutura de diretorios segue padrao MVC.
+- [ ] Configuracao extraida para modulo de config, sem segredo hardcoded.
+- [ ] Models ou repositories abstraem dados.
+- [ ] Views/Routes ficam separadas para visualizacao ou roteamento.
+- [ ] Controllers concentram o fluxo da aplicacao.
+- [ ] Error handling centralizado.
+- [ ] Entry point claro.
+- [ ] Aplicacao inicia sem erros.
+- [ ] Endpoints originais respondem corretamente.
+
+## Atualizacao Do Estado
+
+Ao final da validacao:
+
+- atualizar `STATE.md` com comandos executados e resultados;
+- marcar tarefas `COMPLETED`, `FAILED`, `SKIPPED` ou `BLOCKED`;
+- definir `Execution Status` como `COMPLETED`, `PARTIAL` ou `BLOCKED`;
+- salvar `validation-report.md`.
+
 ## Relatorio Final
 
 Registrar:

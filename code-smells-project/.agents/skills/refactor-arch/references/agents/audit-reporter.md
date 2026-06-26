@@ -26,14 +26,16 @@ Gerar o relatorio da Fase 2 usando `references/audit-report-template.md`, inclui
 - resumo da Fase 1;
 - findings do `refactor-anti-pattern-auditor`;
 - template de relatorio;
+- `STATE.md`, quando existir;
 - destino `reports-folder`.
+- `report-name`, quando informado ou inferido.
 
 ## Saida
 
 Salvar quando possivel:
 
 ```text
-reports/audit-[project-name].md
+reports/[report-name]
 ```
 
 Depois responder com o caminho do relatorio e a pergunta:
@@ -49,13 +51,16 @@ Phase 2 complete. Proceed with refactoring (Phase 3)? [y/n]
 - Manter findings ordenados de `CRITICAL` a `LOW`.
 - Garantir que cada finding tenha evidencia, impacto e recomendacao.
 - Nao iniciar refatoracao.
+- Atualizar `STATE.md` para `WAITING_CONFIRMATION` e manter `Source modifications allowed: NO`.
 - Se o relatorio nao puder ser salvo, explicar o motivo e ainda apresentar o conteudo.
 
 ## Workflow
 
-1. Ler o template.
+1. Ler o template e `references/workflow-state.md`.
 2. Consolidar contagens e metadados.
 3. Normalizar findings.
 4. Relacionar findings a alvos MVC.
-5. Escrever relatorio.
-6. Pedir confirmacao e encerrar a fase.
+5. Definir `report-name`: usar parametro explicito; nos projetos do desafio, usar `audit-project-1.md`, `audit-project-2.md` ou `audit-project-3.md`; nos demais, usar `audit-[project-name].md`.
+6. Escrever relatorio.
+7. Atualizar `STATE.md` com caminho, contagens, findings e alvos MVC.
+8. Pedir confirmacao e encerrar a fase.
