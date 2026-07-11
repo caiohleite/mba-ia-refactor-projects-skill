@@ -4,12 +4,14 @@ from loja.models import Product
 
 class ProductRepository:
     def list_all(self):
-        rows = get_db().execute("SELECT * FROM produtos ORDER BY id").fetchall()
+        rows = get_db().execute(
+            "SELECT * FROM produtos WHERE ativo = 1 ORDER BY id"
+        ).fetchall()
         return [Product.from_row(row) for row in rows]
 
     def get_by_id(self, product_id):
         row = get_db().execute(
-            "SELECT * FROM produtos WHERE id = ?",
+            "SELECT * FROM produtos WHERE id = ? AND ativo = 1",
             (product_id,),
         ).fetchone()
         return Product.from_row(row) if row else None
@@ -29,7 +31,7 @@ class ProductRepository:
             """
             UPDATE produtos
             SET nome = ?, descricao = ?, preco = ?, estoque = ?, categoria = ?
-            WHERE id = ?
+            WHERE id = ? AND ativo = 1
             """,
             (nome, descricao, preco, estoque, categoria, product_id),
         )
@@ -37,13 +39,13 @@ class ProductRepository:
 
     def delete(self, product_id):
         cursor = get_db().execute(
-            "DELETE FROM produtos WHERE id = ?",
+            "UPDATE produtos SET ativo = 0 WHERE id = ? AND ativo = 1",
             (product_id,),
         )
         return cursor.rowcount > 0
 
     def search(self, term="", category=None, min_price=None, max_price=None):
-        clauses = ["1 = 1"]
+        clauses = ["ativo = 1"]
         parameters = []
 
         if term:

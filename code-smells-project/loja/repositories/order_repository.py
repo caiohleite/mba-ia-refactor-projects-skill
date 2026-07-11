@@ -8,7 +8,7 @@ class OrderRepository:
             return {}
         placeholders = ", ".join("?" for _product_id in product_ids)
         rows = get_db().execute(
-            f"SELECT * FROM produtos WHERE id IN ({placeholders})",
+            f"SELECT * FROM produtos WHERE ativo = 1 AND id IN ({placeholders})",
             tuple(product_ids),
         ).fetchall()
         return {row["id"]: Product.from_row(row) for row in rows}
@@ -88,6 +88,7 @@ class OrderRepository:
                 p.status,
                 p.total,
                 p.criado_em,
+                i.id AS item_id,
                 i.produto_id,
                 i.quantidade,
                 i.preco_unitario,
@@ -113,7 +114,7 @@ class OrderRepository:
                     criado_em=row["criado_em"],
                 ),
             )
-            if row["produto_id"] is not None:
+            if row["item_id"] is not None:
                 order.itens.append(
                     OrderItem(
                         produto_id=row["produto_id"],

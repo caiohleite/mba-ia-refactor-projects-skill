@@ -5,8 +5,8 @@ class OrderController:
     def __init__(self, service=None):
         self.service = service or OrderService()
 
-    def create_order(self, data):
-        result = self.service.create_order(data)
+    def create_order(self, data, principal):
+        result = self.service.create_order(data, principal)
         return {
             "dados": result,
             "sucesso": True,

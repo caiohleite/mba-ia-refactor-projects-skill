@@ -5,6 +5,8 @@ import unittest
 
 from loja import create_app
 from loja.database import get_db
+from loja.middlewares.auth import require_auth
+from loja.services.report_service import ReportService
 
 
 class ApiTestCase(unittest.TestCase):
@@ -14,8 +16,14 @@ class ApiTestCase(unittest.TestCase):
         self.app = create_app(
             {
                 "TESTING": True,
+                "SECRET_KEY": "test-only-secret-key",
                 "DATABASE": self.database_path,
                 "ADMIN_TOKEN": "test-admin-token",
+                "AUTO_INIT_DATABASE": True,
+                "SEED_DATA": True,
+                "SEED_ADMIN_NAME": "Test Admin",
+                "SEED_ADMIN_EMAIL": "admin@test.local",
+                "SEED_ADMIN_PASSWORD": "test-admin-password",
                 "ENVIRONMENT": "test",
             }
         )
@@ -23,6 +31,14 @@ class ApiTestCase(unittest.TestCase):
 
     def tearDown(self):
         self.temporary_directory.cleanup()
+
+    def _login_admin(self):
+        response = self.client.post(
+            "/login",
+            json={"email": "admin@test.local", "senha": "test-admin-password"},
+        )
+        self.assertEqual(200, response.status_code)
+        return response
 
     def test_exact_route_contract(self):
         expected = {
@@ -65,8 +81,134 @@ class ApiTestCase(unittest.TestCase):
         self.assertEqual("ok", payload["status"])
         self.assertEqual("test", payload["ambiente"])
         self.assertFalse({"secret_key", "db_path", "debug"} & set(payload))
+        cross_origin = self.client.get("/", headers={"Origin": "https://untrusted.invalid"})
+        self.assertNotIn("Access-Control-Allow-Origin", cross_origin.headers)
+
+        cors_app = create_app(
+            {
+                "TESTING": True,
+                "SECRET_KEY": "cors-test-key",
+                "CORS_ORIGINS": ("https://trusted.example",),
+                "AUTO_INIT_DATABASE": False,
+            }
+        )
+        trusted_origin = cors_app.test_client().get(
+            "/",
+            headers={"Origin": "https://trusted.example"},
+        )
+        self.assertEqual(
+            "https://trusted.example",
+            trusted_origin.headers["Access-Control-Allow-Origin"],
+        )
+
+    def test_auth_middleware_session_and_roles(self):
+        @self.app.get("/_test/admin-only")
+        @require_auth("admin")
+        def admin_only():
+            return {"sucesso": True}
+
+        self.assertEqual(401, self.client.get("/_test/admin-only").status_code)
+        admin_login = self.client.post(
+            "/login",
+            json={"email": "admin@test.local", "senha": "test-admin-password"},
+        )
+        self.assertEqual(200, admin_login.status_code)
+        session_cookie = admin_login.headers["Set-Cookie"]
+        self.assertIn("HttpOnly", session_cookie)
+        self.assertIn("SameSite=Lax", session_cookie)
+        with self.client.session_transaction() as current_session:
+            self.assertEqual(
+                {"id": 1, "tipo": "admin"},
+                current_session["principal"],
+            )
+        self.assertEqual(200, self.client.get("/_test/admin-only").status_code)
+
+        created = self.client.post(
+            "/usuarios",
+            json={"nome": "Cliente", "email": "cliente@test.local", "senha": "senha-forte"},
+        )
+        self.assertEqual(201, created.status_code)
+        client_login = self.client.post(
+            "/login",
+            json={"email": "cliente@test.local", "senha": "senha-forte"},
+        )
+        self.assertEqual(200, client_login.status_code)
+        self.assertEqual(403, self.client.get("/_test/admin-only").status_code)
+
+    def test_authorization_and_order_ownership(self):
+        self.assertEqual(401, self.client.get("/usuarios").status_code)
+        self.assertEqual(401, self.client.get("/pedidos").status_code)
+        self.assertEqual(
+            401,
+            self.client.post(
+                "/produtos",
+                json={"nome": "Bloqueado", "preco": 1, "estoque": 1},
+            ).status_code,
+        )
+
+        first = self.client.post(
+            "/usuarios",
+            json={"nome": "Primeiro", "email": "first@test.local", "senha": "senha-forte"},
+        ).get_json()["dados"]["id"]
+        second = self.client.post(
+            "/usuarios",
+            json={"nome": "Segundo", "email": "second@test.local", "senha": "senha-forte"},
+        ).get_json()["dados"]["id"]
+        self.client.post(
+            "/login",
+            json={"email": "first@test.local", "senha": "senha-forte"},
+        )
+
+        self.assertEqual(200, self.client.get(f"/usuarios/{first}").status_code)
+        self.assertEqual(403, self.client.get(f"/usuarios/{second}").status_code)
+        self.assertEqual(403, self.client.get("/usuarios").status_code)
+        self.assertEqual(403, self.client.get("/pedidos").status_code)
+        self.assertEqual(403, self.client.get("/relatorios/vendas").status_code)
+        self.assertEqual(
+            403,
+            self.client.post(
+                "/produtos",
+                json={"nome": "Bloqueado", "preco": 1, "estoque": 1},
+            ).status_code,
+        )
+
+        own_order = self.client.post(
+            "/pedidos",
+            json={"usuario_id": first, "itens": [{"produto_id": 1, "quantidade": 1}]},
+        )
+        self.assertEqual(201, own_order.status_code)
+        order_id = own_order.get_json()["dados"]["pedido_id"]
+        self.assertEqual(200, self.client.get(f"/pedidos/usuario/{first}").status_code)
+        self.assertEqual(403, self.client.get(f"/pedidos/usuario/{second}").status_code)
+        self.assertEqual(
+            403,
+            self.client.post(
+                "/pedidos",
+                json={"usuario_id": second, "itens": [{"produto_id": 1, "quantidade": 1}]},
+            ).status_code,
+        )
+        self.assertEqual(
+            403,
+            self.client.put(
+                f"/pedidos/{order_id}/status",
+                json={"status": "aprovado"},
+            ).status_code,
+        )
+
+        self._login_admin()
+        self.assertEqual(200, self.client.get("/usuarios").status_code)
+        self.assertEqual(200, self.client.get("/pedidos").status_code)
+        self.assertEqual(200, self.client.get("/relatorios/vendas").status_code)
+        self.assertEqual(
+            200,
+            self.client.put(
+                f"/pedidos/{order_id}/status",
+                json={"status": "aprovado"},
+            ).status_code,
+        )
 
     def test_product_crud_and_safe_search(self):
+        self._login_admin()
         listed = self.client.get("/produtos")
         self.assertEqual(200, listed.status_code)
         self.assertEqual(10, len(listed.get_json()["dados"]))
@@ -108,8 +250,15 @@ class ApiTestCase(unittest.TestCase):
 
         self.assertEqual(200, self.client.delete(f"/produtos/{product_id}").status_code)
         self.assertEqual(404, self.client.get(f"/produtos/{product_id}").status_code)
+        with self.app.app_context():
+            inactive = get_db().execute(
+                "SELECT ativo FROM produtos WHERE id = ?",
+                (product_id,),
+            ).fetchone()
+        self.assertEqual(0, inactive["ativo"])
 
     def test_user_contract_hash_and_login_security(self):
+        self._login_admin()
         listed = self.client.get("/usuarios")
         self.assertEqual(200, listed.status_code)
         for user in listed.get_json()["dados"]:
@@ -133,6 +282,12 @@ class ApiTestCase(unittest.TestCase):
         self.assertNotEqual("senha123", stored)
         self.assertIn("$", stored)
 
+        duplicate = self.client.post(
+            "/usuarios",
+            json={"nome": "Duplicado", "email": "NOVO@EXAMPLE.COM", "senha": "outra-senha"},
+        )
+        self.assertEqual(409, duplicate.status_code)
+
         login = self.client.post(
             "/login",
             json={"email": "novo@example.com", "senha": "senha123"},
@@ -144,7 +299,91 @@ class ApiTestCase(unittest.TestCase):
         )
         self.assertEqual(401, injection.status_code)
 
+    def test_database_constraints_and_legacy_migration(self):
+        with self.app.app_context():
+            database = get_db()
+            self.assertEqual(1, database.execute("PRAGMA user_version").fetchone()[0])
+            self.assertTrue(database.execute("PRAGMA foreign_key_list('pedidos')").fetchall())
+            self.assertEqual(
+                2,
+                len(database.execute("PRAGMA foreign_key_list('itens_pedido')").fetchall()),
+            )
+            with self.assertRaises(sqlite3.IntegrityError):
+                database.execute(
+                    "INSERT INTO pedidos (usuario_id, total) VALUES (?, ?)",
+                    (99999, 10),
+                )
+            database.rollback()
+
+        legacy_path = os.path.join(self.temporary_directory.name, "legacy.db")
+        legacy = sqlite3.connect(legacy_path)
+        legacy.executescript(
+            """
+            CREATE TABLE produtos (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                nome TEXT NOT NULL,
+                descricao TEXT NOT NULL DEFAULT '',
+                preco REAL NOT NULL,
+                estoque INTEGER NOT NULL,
+                categoria TEXT NOT NULL,
+                ativo INTEGER NOT NULL DEFAULT 1,
+                criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            );
+            CREATE TABLE usuarios (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                nome TEXT NOT NULL,
+                email TEXT NOT NULL,
+                senha TEXT NOT NULL,
+                tipo TEXT NOT NULL DEFAULT 'cliente',
+                criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            );
+            CREATE TABLE pedidos (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                usuario_id INTEGER NOT NULL,
+                status TEXT NOT NULL DEFAULT 'pendente',
+                total REAL NOT NULL,
+                criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            );
+            CREATE TABLE itens_pedido (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                pedido_id INTEGER NOT NULL,
+                produto_id INTEGER NOT NULL,
+                quantidade INTEGER NOT NULL,
+                preco_unitario REAL NOT NULL
+            );
+            INSERT INTO produtos
+                (id, nome, descricao, preco, estoque, categoria)
+            VALUES (1, 'Legado', '', 10, 2, 'geral');
+            INSERT INTO usuarios (id, nome, email, senha, tipo)
+            VALUES (1, 'Legado', 'legacy@example.com', 'hash-legado', 'cliente');
+            INSERT INTO pedidos (id, usuario_id, total) VALUES (1, 1, 10);
+            INSERT INTO itens_pedido
+                (id, pedido_id, produto_id, quantidade, preco_unitario)
+            VALUES (1, 1, 1, 1, 10);
+            """
+        )
+        legacy.close()
+
+        migrated_app = create_app(
+            {
+                "TESTING": True,
+                "SECRET_KEY": "migration-test-key",
+                "DATABASE": legacy_path,
+                "AUTO_INIT_DATABASE": True,
+                "SEED_DATA": False,
+            }
+        )
+        with migrated_app.app_context():
+            database = get_db()
+            self.assertEqual(1, database.execute("PRAGMA user_version").fetchone()[0])
+            self.assertEqual(
+                "legacy@example.com",
+                database.execute("SELECT email FROM usuarios WHERE id = 1").fetchone()[0],
+            )
+            self.assertEqual([], database.execute("PRAGMA foreign_key_check").fetchall())
+
     def test_order_stock_status_and_report_contract(self):
+        self._login_admin()
         initial_stock = self.client.get("/produtos/1").get_json()["dados"]["estoque"]
         created = self.client.post(
             "/pedidos",
@@ -176,7 +415,33 @@ class ApiTestCase(unittest.TestCase):
         self.assertEqual(200, report.status_code)
         self.assertEqual(1, report.get_json()["dados"]["pedidos_cancelados"])
 
+        self.assertEqual(200, self.client.delete("/produtos/1").status_code)
+        historical_order = self.client.get("/pedidos").get_json()["dados"][0]
+        self.assertEqual("Notebook Gamer", historical_order["itens"][0]["produto_nome"])
+        unavailable = self.client.post(
+            "/pedidos",
+            json={"usuario_id": 1, "itens": [{"produto_id": 1, "quantidade": 1}]},
+        )
+        self.assertEqual(400, unavailable.status_code)
+
+    def test_discount_policy_boundaries(self):
+        cases = (
+            (1_000, 0),
+            (1_000.01, 20.0002),
+            (5_000, 100),
+            (5_000.01, 250.0005),
+            (10_000, 500),
+            (10_000.01, 1_000.001),
+        )
+        for revenue, expected_discount in cases:
+            with self.subTest(revenue=revenue):
+                self.assertAlmostEqual(
+                    expected_discount,
+                    ReportService._calculate_discount(revenue),
+                )
+
     def test_admin_endpoints_fail_closed(self):
+        self._login_admin()
         before = self.client.get("/usuarios").get_json()["dados"]
         query = self.client.post("/admin/query", json={"sql": "DELETE FROM usuarios"})
         self.assertEqual(403, query.status_code)
@@ -202,6 +467,7 @@ class ApiTestCase(unittest.TestCase):
         def unexpected_error():
             raise sqlite3.DatabaseError("internal database detail")
 
+        self._login_admin()
         invalid = self.client.post(
             "/pedidos",
             json={"usuario_id": 1, "itens": [{"produto_id": 1, "quantidade": -1}]},

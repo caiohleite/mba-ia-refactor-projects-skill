@@ -1,6 +1,13 @@
 from loja.repositories.report_repository import ReportRepository
 
 
+DISCOUNT_TIERS = (
+    (10_000, 0.10),
+    (5_000, 0.05),
+    (1_000, 0.02),
+)
+
+
 class ReportService:
     def __init__(self, repository=None):
         self.repository = repository or ReportRepository()
@@ -23,10 +30,7 @@ class ReportService:
 
     @staticmethod
     def _calculate_discount(revenue):
-        if revenue > 10000:
-            return revenue * 0.10
-        if revenue > 5000:
-            return revenue * 0.05
-        if revenue > 1000:
-            return revenue * 0.02
+        for minimum_revenue, discount_rate in DISCOUNT_TIERS:
+            if revenue > minimum_revenue:
+                return revenue * discount_rate
         return 0

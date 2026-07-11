@@ -1,7 +1,7 @@
 import logging
 
 from loja.database import get_db
-from loja.errors import NotFoundError, ValidationError
+from loja.errors import AuthenticationError, AuthorizationError, NotFoundError, ValidationError
 from loja.models import VALID_ORDER_STATUSES
 from loja.repositories.order_repository import OrderRepository
 from loja.repositories.user_repository import UserRepository
@@ -16,7 +16,7 @@ class OrderService:
         self.order_repository = order_repository or OrderRepository()
         self.user_repository = user_repository or UserRepository()
 
-    def create_order(self, data):
+    def create_order(self, data, principal=None):
         data = require_object(data)
         user_id = data.get("usuario_id")
         items = data.get("itens", [])
@@ -24,6 +24,10 @@ class OrderService:
             raise ValidationError("Usuario ID é obrigatório")
         if not isinstance(items, list) or not items:
             raise ValidationError("Pedido deve ter pelo menos 1 item")
+        if not isinstance(principal, dict):
+            raise AuthenticationError("Autenticação necessária")
+        if principal.get("tipo") != "admin" and principal.get("id") != user_id:
+            raise AuthorizationError("Pedido permitido apenas para o próprio usuário")
         if self.user_repository.get_by_id(user_id) is None:
             raise ValidationError("Usuário não encontrado")
 

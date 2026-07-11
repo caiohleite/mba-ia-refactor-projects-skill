@@ -1,4 +1,5 @@
 from dataclasses import dataclass, field
+from typing import Optional
 
 
 VALID_CATEGORIES = (
@@ -87,7 +88,7 @@ class User:
 
 @dataclass(frozen=True)
 class OrderItem:
-    produto_id: int
+    produto_id: Optional[int]
     produto_nome: str
     quantidade: int
     preco_unitario: float

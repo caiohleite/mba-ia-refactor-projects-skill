@@ -1,4 +1,5 @@
 import hmac
+import sqlite3
 
 from werkzeug.security import check_password_hash, generate_password_hash
 
@@ -31,12 +32,17 @@ class UserService:
         if self.repository.get_by_email(email.strip()) is not None:
             raise ConflictError("Email já cadastrado")
 
-        user_id = self.repository.create(
-            name.strip(),
-            email.strip(),
-            generate_password_hash(password),
-        )
-        get_db().commit()
+        database = get_db()
+        try:
+            user_id = self.repository.create(
+                name.strip(),
+                email.strip(),
+                generate_password_hash(password),
+            )
+            database.commit()
+        except sqlite3.IntegrityError as error:
+            database.rollback()
+            raise ConflictError("Email já cadastrado") from error
         return user_id
 
     def login(self, data):
