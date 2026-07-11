@@ -1,96 +1,96 @@
-# Checklist De Validacao
+# Checklist de Validação
 
-Use este guia no final da Fase 3 e sempre que uma etapa de refatoracao mudar bootstrap, rotas, banco ou contratos HTTP.
+Use este guia no final da Fase 3 e sempre que uma etapa de refatoração mudar bootstrap, rotas, banco ou contratos HTTP.
 
-## Preparacao
+## Preparação
 
-- Identificar comando de instalacao: `pip install -r requirements.txt`, `npm install`, `poetry install`, etc.
+- Identificar comando de instalação: `pip install -r requirements.txt`, `npm install`, `poetry install`, etc.
 - Identificar comando de seed/migration quando existir.
 - Identificar comando de boot: `python app.py`, `flask run`, `npm start`, `node src/app.js`.
 - Identificar porta e base URL.
 - Coletar endpoints a partir de decorators, `add_url_rule`, blueprints, `app.get/post`, routers ou arquivo `api.http`.
 
-## Validacao De Boot
+## Validação de Boot
 
 Executar o comando de boot quando seguro. Se o processo ficar em primeiro plano, usar timeout ou iniciar em background de forma controlada. Validar:
 
-- processo inicia sem excecao;
+- processo inicia sem exceção;
 - porta esperada abre;
-- logs nao mostram stack trace;
+- logs não mostram stack trace;
 - banco inicializa ou conecta.
 
-Se nao for possivel executar por dependencia, rede, porta ocupada ou sandbox, documentar o motivo e o comando exato que deveria ser rodado.
+Se não for possível executar por dependência, rede, porta ocupada ou sandbox, documentar o motivo e o comando exato que deveria ser rodado.
 
-## Smoke Tests De Endpoints
+## Smoke Tests de Endpoints
 
 Testar pelo menos:
 
 - health/root;
 - listagem principal;
-- criacao simples quando houver payload seguro;
+- criação simples quando houver payload seguro;
 - busca por ID quando seed existir;
-- fluxo de dominio critico, como checkout, pedido ou task;
-- endpoint de relatorio se existir.
+- fluxo de domínio crítico, como checkout, pedido ou task;
+- endpoint de relatório se existir.
 
-Preservar metodos, paths e formatos principais. Se o projeto possuir `api.http`, usa-lo como fonte de contratos.
+Preservar métodos, paths e formatos principais. Se o projeto possuir `api.http`, usá-lo como fonte de contratos.
 
-## Regressao Arquitetural
+## Regressão Arquitetural
 
 Conferir:
 
 - nenhum segredo hardcoded permanece em respostas ou logs;
 - nenhuma query concatenada com input externo permanece nos fluxos alterados;
-- routes/views nao acessam banco diretamente, salvo excecao justificada;
-- controllers nao concentram loops de relatorio ou regra extensa;
-- models nao retornam senha/hash/token em DTO publico;
-- error handler central esta registrado;
-- imports antigos e arquivos mortos nao quebram boot.
+- routes/views não acessam banco diretamente, salvo exceção justificada;
+- controllers não concentram loops de relatório ou regra extensa;
+- models não retornam senha/hash/token em DTO público;
+- error handler central está registrado;
+- imports antigos e arquivos mortos não quebram boot.
 
-## Checklist Obrigatorio Do README
+## Checklist Obrigatório do README
 
-### Fase 1 - Analise
+### Fase 1 - Análise
 
 - [ ] Linguagem detectada corretamente.
 - [ ] Framework detectado corretamente.
-- [ ] Dominio da aplicacao descrito corretamente.
-- [ ] Numero de arquivos analisados condiz com a realidade.
+- [ ] Domínio da aplicação descrito corretamente.
+- [ ] Número de arquivos analisados condiz com a realidade.
 
 ### Fase 2 - Auditoria
 
-- [ ] Relatorio segue o template definido nos arquivos de referencia.
-- [ ] Cada finding tem arquivo e linhas exatos quando aplicavel.
-- [ ] Findings ordenados por severidade (`CRITICAL` -> `LOW`).
-- [ ] Minimo de 5 findings identificados quando houver evidencia suficiente.
-- [ ] Deteccao de APIs deprecated incluida quando aplicavel.
-- [ ] Skill pausou e pediu confirmacao antes da Fase 3.
+- [ ] Relatório segue o template definido nos arquivos de referência.
+- [ ] Cada achado tem arquivo e linhas exatos quando aplicável.
+- [ ] Achados ordenados por severidade (`CRITICAL` -> `LOW`).
+- [ ] Mínimo de 5 achados identificados quando houver evidência suficiente.
+- [ ] Detecção de APIs deprecated incluída quando aplicável.
+- [ ] Skill pausou e pediu confirmação antes da Fase 3.
 
-### Fase 3 - Refatoracao
+### Fase 3 - Refatoração
 
-- [ ] Estrutura de diretorios segue padrao MVC.
-- [ ] Configuracao extraida para modulo de config, sem segredo hardcoded.
+- [ ] Estrutura de diretórios segue padrão MVC.
+- [ ] Configuração extraída para módulo de config, sem segredo hardcoded.
 - [ ] Models ou repositories abstraem dados.
-- [ ] Views/Routes ficam separadas para visualizacao ou roteamento.
-- [ ] Controllers concentram o fluxo da aplicacao.
+- [ ] Views/Routes ficam separadas para visualização ou roteamento.
+- [ ] Controllers concentram o fluxo da aplicação.
 - [ ] Error handling centralizado.
 - [ ] Entry point claro.
-- [ ] Aplicacao inicia sem erros.
+- [ ] Aplicação inicia sem erros.
 - [ ] Endpoints originais respondem corretamente.
 
-## Atualizacao Do Estado
+## Atualização do Estado
 
-Ao final da validacao:
+Ao final da validação:
 
 - atualizar `STATE.md` com comandos executados e resultados;
 - marcar tarefas `COMPLETED`, `FAILED`, `SKIPPED` ou `BLOCKED`;
-- definir `Execution Status` como `COMPLETED`, `PARTIAL` ou `BLOCKED`;
+- definir `Status de Execução` como `COMPLETED`, `PARTIAL` ou `BLOCKED`;
 - salvar `validation-report.md`.
 
-## Relatorio Final
+## Relatório Final
 
 Registrar:
 
 - comandos executados;
 - endpoints testados e status;
 - testes automatizados executados;
-- validacoes nao executadas e motivo;
-- findings tratados, parcialmente tratados ou remanescentes.
+- validações não executadas e motivo;
+- achados tratados, parcialmente tratados ou remanescentes.

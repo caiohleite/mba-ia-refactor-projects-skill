@@ -1,8 +1,8 @@
-# Playbook De Refatoracao
+# Playbook de Refatoração
 
-Use este playbook na Fase 3. Aplique somente os padroes relacionados aos findings aprovados. Os exemplos sao ilustrativos; adapte nomes e idioms a stack atual.
+Use este playbook na Fase 3. Aplique somente os padrões relacionados aos achados aprovados. Os exemplos são ilustrativos; adapte nomes e idioms à stack atual.
 
-## 1. Extrair Configuracao E Segredos
+## 1. Extrair Configuração e Segredos
 
 **Antes**
 
@@ -21,9 +21,9 @@ class Settings:
     DEBUG = os.getenv("FLASK_DEBUG", "false").lower() == "true"
 ```
 
-Regra: substituir valores sensiveis por variaveis de ambiente e defaults seguros para desenvolvimento. Nunca retornar segredos em healthcheck.
+Regra: substituir valores sensíveis por variáveis de ambiente e defaults seguros para desenvolvimento. Nunca retornar segredos em healthcheck.
 
-## 2. Trocar SQL Concatenado Por Parametros
+## 2. Trocar SQL Concatenado por Parâmetros
 
 **Antes**
 
@@ -37,9 +37,9 @@ cursor.execute("SELECT * FROM usuarios WHERE email = '" + email + "'")
 cursor.execute("SELECT * FROM usuarios WHERE email = ?", (email,))
 ```
 
-Regra: toda entrada externa deve passar por binding de parametros, ORM seguro ou query builder.
+Regra: toda entrada externa deve passar por binding de parâmetros, ORM seguro ou query builder.
 
-## 3. Afinar Routes E Controllers
+## 3. Afinar Routes e Controllers
 
 **Antes**
 
@@ -66,7 +66,7 @@ async function create(req, res, next) {
 
 Regra: route registra endpoint; controller adapta HTTP; service executa caso de uso.
 
-## 4. Dividir God Object Por Dominio
+## 4. Dividir God Object por Domínio
 
 **Antes**
 
@@ -90,7 +90,7 @@ repositories/courseRepository.js
 repositories/paymentRepository.js
 ```
 
-Regra: separar bootstrap, rotas, controllers, services e repositories. Mover um dominio por vez.
+Regra: separar bootstrap, rotas, controllers, services e repositories. Mover um domínio por vez.
 
 ## 5. Remover N+1 Queries
 
@@ -112,7 +112,7 @@ tasks = (
 )
 ```
 
-Regra: usar eager loading, joins, agregacoes ou consultas em lote. Em SQL direto, buscar mapas por IDs antes do loop.
+Regra: usar eager loading, joins, agregações ou consultas em lote. Em SQL direto, buscar mapas por IDs antes do loop.
 
 ## 6. Substituir Criptografia Fraca
 
@@ -130,7 +130,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 self.password = generate_password_hash(pwd)
 ```
 
-Regra: usar algoritmo com salt e custo configuravel. Para Node.js, preferir `bcrypt` ou `crypto.scrypt` com salt.
+Regra: usar algoritmo com salt e custo configurável. Para Node.js, preferir `bcrypt` ou `crypto.scrypt` com salt.
 
 ## 7. Criar DTO Seguro
 
@@ -148,7 +148,7 @@ def to_public_dict(self):
     return {"id": self.id, "name": self.name, "email": self.email}
 ```
 
-Regra: separar representacao interna de resposta publica. Nunca serializar senha, token, cartao ou segredo.
+Regra: separar representação interna de resposta pública. Nunca serializar senha, token, cartão ou segredo.
 
 ## 8. Centralizar Error Handling
 
@@ -169,15 +169,15 @@ def handle_domain_error(error):
     return jsonify({"error": error.message}), error.status_code
 ```
 
-Regra: mapear erros de dominio e infraestrutura em um lugar. Evitar vazar detalhes internos.
+Regra: mapear erros de domínio e infraestrutura em um lugar. Evitar vazar detalhes internos.
 
-## 9. Extrair Validacao Reutilizavel
+## 9. Extrair Validação Reutilizável
 
 **Antes**
 
 ```python
 if status not in ["pending", "in_progress", "done", "cancelled"]:
-    return jsonify({"error": "Status invalido"}), 400
+    return jsonify({"error": "Status inválido"}), 400
 ```
 
 **Depois**
@@ -187,10 +187,10 @@ VALID_STATUSES = {"pending", "in_progress", "done", "cancelled"}
 
 def validate_status(status):
     if status not in VALID_STATUSES:
-        raise ValidationError("Status invalido")
+        raise ValidationError("Status inválido")
 ```
 
-Regra: validacoes repetidas pertencem a validators, schemas ou objetos de dominio.
+Regra: validações repetidas pertencem a validators, schemas ou objetos de domínio.
 
 ## 10. Modernizar APIs Deprecated
 
@@ -206,7 +206,7 @@ user = User.query.get(user_id)
 user = db.session.get(User, user_id)
 ```
 
-Regra: trocar APIs deprecated quando a versao da stack confirmar suporte ao equivalente moderno. Se a troca afetar muitos pontos, aplicar em etapa isolada e validar.
+Regra: trocar APIs deprecated quando a versão da stack confirmar suporte ao equivalente moderno. Se a troca afetar muitos pontos, aplicar em etapa isolada e validar.
 
 ## Ordem Recomendada
 
@@ -214,29 +214,29 @@ Regra: trocar APIs deprecated quando a versao da stack confirmar suporte ao equi
 2. Extrair repositories/model access sem mudar contrato.
 3. Extrair services com regras de negocio.
 4. Afinar controllers e routes.
-5. Corrigir seguranca critica.
+5. Corrigir segurança crítica.
 6. Otimizar N+1 e duplicacoes.
 7. Modernizar deprecated APIs.
-8. Rodar validacao completa.
+8. Rodar validação completa.
 
-## Mapeamento De Anti-Patterns Para Transformacoes
+## Mapeamento de Anti-Patterns para Transformações
 
 Use esta tabela para montar a matriz de cobertura do plano:
 
-| Anti-pattern | Padroes principais | Observacoes |
+| Anti-pattern | Padrões principais | Observações |
 |---|---|---|
 | AP-01 SQL Injection | 2, 4 | Corrigir antes de mover grandes blocos quando houver input externo ativo |
-| AP-02 Segredos hardcoded | 1, 7 | Remover de codigo, respostas e logs |
-| AP-03 Endpoint administrativo sem protecao | 3, 8 | Exigir auth/autorizacao ou remover recurso perigoso com aprovacao |
-| AP-04 God class/file/method | 3, 4, 8 | Dividir por dominio e por camada |
+| AP-02 Segredos hardcoded | 1, 7 | Remover de código, respostas e logs |
+| AP-03 Endpoint administrativo sem proteção | 3, 8 | Exigir auth/autorização ou remover recurso perigoso com aprovação |
+| AP-04 God class/file/method | 3, 4, 8 | Dividir por domínio e por camada |
 | AP-05 Regra pesada em route/controller | 3, 4, 9 | Extrair use cases/services e validadores |
-| AP-06 Persistencia misturada com dominio | 2, 4 | Introduzir repositories/data access e transacoes explicitas |
-| AP-07 Criptografia/senha insegura | 6, 7 | Migrar hash e DTO com cuidado para nao quebrar login |
-| AP-08 Vazamento de dados sensiveis | 1, 7, 8 | Criar DTO publico e sanitizar logs/erros |
+| AP-06 Persistência misturada com domínio | 2, 4 | Introduzir repositories/data access e transações explícitas |
+| AP-07 Criptografia/senha insegura | 6, 7 | Migrar hash e DTO com cuidado para não quebrar login |
+| AP-08 Vazamento de dados sensíveis | 1, 7, 8 | Criar DTO público e sanitizar logs/erros |
 | AP-09 N+1 queries | 5 | Trocar loops com query por join/eager loading/lote |
-| AP-10 Estado global mutavel | 1, 4 | Encapsular ciclo de vida e injetar dependencias |
-| AP-11 Validacao espalhada | 9 | Centralizar constantes, schemas ou validadores |
-| AP-12 Error handling inconsistente | 8 | Mapear erros de dominio e infraestrutura |
-| AP-13 APIs deprecated | 10 | Modernizar em etapa isolada e validar versao da stack |
-| AP-14 Nomes obscuros/magic values | 9 | Corrigir junto da camada tocada, evitando refactor cosmetico amplo |
-| AP-15 Imports mortos/residuos | 8, 9 | Limpar no final para reduzir risco |
+| AP-10 Estado global mutável | 1, 4 | Encapsular ciclo de vida e injetar dependências |
+| AP-11 Validação espalhada | 9 | Centralizar constantes, schemas ou validadores |
+| AP-12 Error handling inconsistente | 8 | Mapear erros de domínio e infraestrutura |
+| AP-13 APIs deprecated | 10 | Modernizar em etapa isolada e validar versão da stack |
+| AP-14 Nomes obscuros/magic values | 9 | Corrigir junto da camada tocada, evitando refactor cosmético amplo |
+| AP-15 Imports mortos/resíduos | 8, 9 | Limpar no final para reduzir risco |

@@ -1,19 +1,19 @@
-# Analise De Projeto
+# Análise de Projeto
 
-Use este guia na Fase 1 para entender a codebase antes de auditar ou refatorar. A analise deve ser agnostica de tecnologia: detectar fatos a partir de arquivos, manifests, imports, rotas, inicializacao, modelos e uso real das dependencias.
+Use este guia na Fase 1 para entender a codebase antes de auditar ou refatorar. A análise deve ser agnóstica de tecnologia: detectar fatos a partir de arquivos, manifests, imports, rotas, inicialização, modelos e uso real das dependências.
 
-## Escopo E Inventario
+## Escopo e Inventário
 
-1. Definir o diretorio raiz do projeto.
-2. Ignorar `.git`, caches, ambientes virtuais, `node_modules`, `dist`, `build`, bancos locais gerados e relatorios antigos, salvo quando o usuario pedir o contrario.
+1. Definir o diretório raiz do projeto.
+2. Ignorar `.git`, caches, ambientes virtuais, `node_modules`, `dist`, `build`, bancos locais gerados e relatórios antigos, salvo quando o usuário pedir o contrário.
 3. Listar manifests e lockfiles: `package.json`, `requirements.txt`, `pyproject.toml`, `Pipfile`, `poetry.lock`, `go.mod`, `pom.xml`, `build.gradle`, `composer.json`.
 4. Listar entry points: `app.py`, `main.py`, `wsgi.py`, `src/app.js`, `server.js`, `index.js`, CLIs, Dockerfiles e scripts de start.
-5. Listar arquivos de dominio: models, routes, controllers, services, repositories, schemas, migrations, seeders, utils e middlewares.
-6. Contar somente arquivos de codigo relevantes para o resumo. Excluir documentacao e artefatos gerados.
+5. Listar arquivos de domínio: models, routes, controllers, services, repositories, schemas, migrations, seeders, utils e middlewares.
+6. Contar somente arquivos de código relevantes para o resumo. Excluir documentação e artefatos gerados.
 
-## Deteccao De Linguagem E Framework
+## Detecção de Linguagem e Framework
 
-| Evidencia | Linguagem/framework provavel |
+| Evidência | Linguagem/framework provável |
 |---|---|
 | `requirements.txt` com `flask`, imports `from flask import` | Python + Flask |
 | `flask_sqlalchemy`, `SQLAlchemy()` | Flask + SQLAlchemy |
@@ -26,62 +26,62 @@ Use este guia na Fase 1 para entender a codebase antes de auditar ou refatorar. 
 
 Quando houver mais de uma stack, relatar cada uma e delimitar o escopo analisado.
 
-## Deteccao De Banco De Dados
+## Detecção de Banco de Dados
 
 Procure por:
 
-- chamadas diretas de conexao (`sqlite3.connect`, `new sqlite3.Database`, `psycopg2.connect`, `mysql.createConnection`);
+- chamadas diretas de conexão (`sqlite3.connect`, `new sqlite3.Database`, `psycopg2.connect`, `mysql.createConnection`);
 - ORMs (`SQLAlchemy`, `Sequelize`, `Prisma`, `TypeORM`, `Mongoose`);
 - migrations, schemas, seeds e arquivos `.sql`;
-- strings de conexao hardcoded ou lidas de ambiente;
+- strings de conexão hardcoded ou lidas de ambiente;
 - tabelas criadas em runtime e models declarativos.
 
-No resumo, listar tabelas ou entidades de dominio detectadas, por exemplo `produtos`, `usuarios`, `pedidos`, `tasks`, `categories`.
+No resumo, listar tabelas ou entidades de domínio detectadas, por exemplo `produtos`, `usuarios`, `pedidos`, `tasks`, `categories`.
 
 ## Mapeamento Arquitetural
 
 Classificar a arquitetura real a partir do comportamento dos arquivos:
 
-- **Monolito procedural**: entry point registra rotas e chama funcoes globais; persistencia e regra de negocio misturadas.
-- **God object/god file**: uma classe ou arquivo concentra bootstrap, rotas, validacao, regras, SQL e integracoes.
-- **MVC parcial**: existem pastas como `models/` e `routes/`, mas routes fazem regra de negocio, queries, serializacao complexa ou chamadas externas.
-- **MVC/layered adequado**: routes finas, controllers coordenam casos de uso, models/repositories isolam persistencia e services guardam regra de negocio.
+- **Monolito procedural**: entry point registra rotas e chama funções globais; persistência e regra de negócio misturadas.
+- **God object/god file**: uma classe ou arquivo concentra bootstrap, rotas, validação, regras, SQL e integrações.
+- **MVC parcial**: existem pastas como `models/` e `routes/`, mas routes fazem regra de negócio, queries, serialização complexa ou chamadas externas.
+- **MVC/layered adequado**: routes finas, controllers coordenam casos de uso, models/repositories isolam persistência e services guardam regra de negócio.
 
-Nao confiar apenas em nomes de diretorios. Confirmar responsabilidades lendo chamadas, imports e fluxo de dados.
+Não confiar apenas em nomes de diretórios. Confirmar responsabilidades lendo chamadas, imports e fluxo de dados.
 
-## Inferencia De Dominio
+## Inferência de Domínio
 
-Inferir o dominio pelos nomes de entidades, rotas, seeds e mensagens:
+Inferir o domínio pelos nomes de entidades, rotas, seeds e mensagens:
 
 - E-commerce: produtos, usuarios, pedidos, itens, estoque, relatorios de vendas.
 - LMS/checkout: users, courses, enrollments, payments, checkout, financial reports.
 - Task Manager: tasks, users, categories, priorities, overdue, reports.
 
-Declarar a inferencia como `Domain` no resumo e citar evidencias no relatorio se houver incerteza.
+Declarar a inferência como `Domínio` no resumo e citar evidências no relatório se houver incerteza.
 
-## Sinais De Arquitetura Problematicos
+## Sinais de Arquitetura Problemáticos
 
 Registrar para a Fase 2 quando encontrar:
 
 - rotas manipulando banco diretamente;
-- controllers com validacao longa, regra de negocio, notificacoes ou queries;
-- models expondo senhas, tokens ou detalhes internos na serializacao;
+- controllers com validação longa, regra de negócio, notificações ou queries;
+- models expondo senhas, tokens ou detalhes internos na serialização;
 - SQL concatenado com input;
 - chamadas N+1 em loops;
-- configuracao sensivel no codigo;
-- estado global mutavel;
-- endpoints administrativos sem autenticacao;
-- tratamento de erro generico que esconde falhas ou vaza excecoes;
-- APIs deprecated ou legadas.
+- configuração sensível no código;
+- estado global mutável;
+- endpoints administrativos sem autenticação;
+- tratamento de erro genérico que esconde falhas ou vaza exceções;
+- APIs obsoletas ou legadas.
 
-## Resumo Da Fase 1
+## Resumo da Fase 1
 
 Produzir o resumo operacional com:
 
 - linguagem e framework;
-- principais dependencias;
-- dominio;
+- principais dependências;
+- domínio;
 - arquitetura atual;
-- numero de arquivos analisados;
-- tabelas, modelos ou colecoes detectadas;
-- observacoes de incerteza quando aplicavel.
+- número de arquivos analisados;
+- tabelas, modelos ou coleções detectadas;
+- observações de incerteza quando aplicável.

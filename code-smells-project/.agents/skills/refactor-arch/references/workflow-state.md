@@ -1,6 +1,6 @@
-# Controle De Estado E Recuperacao
+# Controle de Estado e Recuperação
 
-Use este guia em todas as fases da skill `refactor-arch`. O objetivo e permitir retomada precisa apos interrupcao, sem repetir etapas concluidas nem perder controle das tarefas executadas.
+Use este guia em todas as fases da skill `refactor-arch`. O objetivo é permitir retomada precisa após interrupção, sem repetir etapas concluídas nem perder controle das tarefas executadas.
 
 ## Artefatos Gerados
 
@@ -8,7 +8,7 @@ Crie e mantenha estes artefatos dentro de `reports-folder/.refactor-arch/`:
 
 ```text
 reports-folder/
-|-- audit-[project-name].md
+|-- audit-[nome-do-projeto].md
 `-- .refactor-arch/
     |-- STATE.md
     |-- phase-1-analysis.md
@@ -17,114 +17,114 @@ reports-folder/
     `-- validation-report.md
 ```
 
-Antes da confirmacao da Fase 2, somente estes artefatos de workflow e o relatorio de auditoria podem ser criados ou atualizados. Codigo-fonte, manifests, lockfiles, configuracao da aplicacao e banco de dados nao devem ser alterados antes da confirmacao explicita.
+Antes da confirmação da Fase 2, somente estes artefatos de fluxo de trabalho e o relatório de auditoria podem ser criados ou atualizados. Código-fonte, manifests, lockfiles, configuração da aplicação e banco de dados não devem ser alterados antes da confirmação explícita.
 
 ## STATE.md
 
-`STATE.md` e a fonte de verdade para retomada. Atualize-o ao inicio e ao fim de cada fase, antes e depois de cada tarefa de refatoracao, e sempre que uma validacao falhar.
+`STATE.md` é a fonte de verdade para retomada. Atualize-o no início e no fim de cada fase, antes e depois de cada tarefa de refatoração, e sempre que uma validação falhar.
 
 Modelo:
 
 ```markdown
-# Refactor Arch State - [PROJECT_NAME]
+# Estado da Refactor Arch - [NOME_DO_PROJETO]
 
-Generated on: [YYYY-MM-DD HH:MM:SS]
-Last updated: [YYYY-MM-DD HH:MM:SS]
+Gerado em: [YYYY-MM-DD HH:MM:SS]
+Última atualização: [YYYY-MM-DD HH:MM:SS]
 
-## Parameters
-- Project folder: [path]
-- Reports folder: [path]
-- Report name: [audit file]
-- Ignore folders: [items]
-- Validation base URL: [url or not provided]
+## Parâmetros
+- Pasta do projeto: [caminho]
+- Pasta de relatórios: [caminho]
+- Nome do relatório: [arquivo de auditoria]
+- Pastas ignoradas: [itens]
+- URL base de validação: [url ou não informada]
 
-## Execution Status
-- Current phase: [PHASE_1_ANALYSIS|PHASE_2_AUDIT|WAITING_CONFIRMATION|PHASE_3_PLANNING|PHASE_3_TASKS|PHASE_3_IMPLEMENTATION|PHASE_3_VALIDATION|COMPLETED|PARTIAL|BLOCKED]
-- Source modifications allowed: [NO|YES]
-- Human confirmation for Phase 3: [PENDING|APPROVED|DECLINED]
-- Last completed step: [short description]
-- Next step: [short description]
+## Status de Execução
+- Fase atual: [PHASE_1_ANALYSIS|PHASE_2_AUDIT|WAITING_CONFIRMATION|PHASE_3_PLANNING|PHASE_3_TASKS|PHASE_3_IMPLEMENTATION|PHASE_3_VALIDATION|COMPLETED|PARTIAL|BLOCKED]
+- Modificações no código-fonte permitidas: [NO|YES]
+- Confirmação humana para a Fase 3: [PENDING|APPROVED|DECLINED]
+- Última etapa concluída: [descrição curta]
+- Próxima etapa: [descrição curta]
 
-## Artifacts
-- Phase 1 analysis: [path or PENDING]
-- Audit report: [path or PENDING]
-- Refactor plan: [path or PENDING]
-- Task list: [path or PENDING]
-- Validation report: [path or PENDING]
+## Artefatos
+- Análise da Fase 1: [caminho ou PENDING]
+- Relatório de auditoria: [caminho ou PENDING]
+- Plano de refatoração: [caminho ou PENDING]
+- Lista de tarefas: [caminho ou PENDING]
+- Relatório de validação: [caminho ou PENDING]
 
-## Findings Summary
+## Resumo dos Achados
 - CRITICAL: [N]
 - HIGH: [N]
 - MEDIUM: [N]
 - LOW: [N]
 
-## Findings Coverage
-| Finding ID | Severity | Decision | Plan Step | Task IDs | Validation | Notes |
+## Cobertura dos Achados
+| ID do achado | Severidade | Decisão | Etapa do plano | IDs das tarefas | Validação | Observações |
 |---|---|---|---|---|---|---|
-| AP-XX | HIGH | FIX | P02 | T03,T04 | smoke/test/check | notes |
+| AP-XX | HIGH | FIX | P02 | T03,T04 | smoke/test/verificação | observações |
 
-## Refactoring Tasks
-| ID | Status | Plan Step | Finding IDs | Files | Validation | Notes |
+## Tarefas de Refatoração
+| ID | Status | Etapa do plano | IDs dos achados | Arquivos | Validação | Observações |
 |---|---|---|---|---|---|---|
-| T01 | PENDING | P01 | AP-XX | path | command/check | notes |
+| T01 | PENDING | P01 | AP-XX | caminho | comando/verificação | observações |
 
-## Endpoint Contract
-| Method | Path | Purpose | Source | Status |
+## Contrato dos Endpoints
+| Método | Caminho | Finalidade | Origem | Status |
 |---|---|---|---|---|
 
-## Validation Log
-| Time | Command/Check | Result | Notes |
+## Log de Validação
+| Horário | Comando/Verificação | Resultado | Observações |
 |---|---|---|---|
 
-## Errors And Recovery Notes
-- [timestamp] [error or decision]
+## Erros e Notas de Recuperação
+- [timestamp] [erro ou decisão]
 ```
 
-## Status Rules
+## Regras de Status
 
-- `PENDING`: ainda nao iniciado.
-- `IN_PROGRESS`: em execucao agora.
-- `COMPLETED`: concluido e validado.
-- `FAILED`: executado com erro; exige correcao ou decisao.
-- `SKIPPED`: omitido com justificativa explicita.
-- `BLOCKED`: impossivel avancar sem entrada humana ou dependencia externa.
+- `PENDING`: ainda não iniciado.
+- `IN_PROGRESS`: em execução agora.
+- `COMPLETED`: concluído e validado.
+- `FAILED`: executado com erro; exige correção ou decisão.
+- `SKIPPED`: omitido com justificativa explícita.
+- `BLOCKED`: impossível avançar sem entrada humana ou dependência externa.
 
-## Atualizacao Por Fase
+## Atualização por Fase
 
 ### Fase 1
 
-1. Criar `STATE.md` se nao existir.
-2. Registrar parametros, arquivos ignorados e fase atual.
-3. Salvar resumo tecnico em `phase-1-analysis.md`.
-4. Atualizar `STATE.md` com stack, dominio, arquitetura, endpoints detectados e proxima fase.
+1. Criar `STATE.md` se não existir.
+2. Registrar parâmetros, arquivos ignorados e fase atual.
+3. Salvar resumo técnico em `phase-1-analysis.md`.
+4. Atualizar `STATE.md` com stack, domínio, arquitetura, endpoints detectados e próxima fase.
 
 ### Fase 2
 
 1. Atualizar fase para `PHASE_2_AUDIT`.
-2. Salvar o relatorio de auditoria no caminho definido.
-3. Registrar contagens de severidade, findings e alvos MVC.
+2. Salvar o relatório de auditoria no caminho definido.
+3. Registrar contagens de severidade, achados e alvos MVC.
 4. Atualizar fase para `WAITING_CONFIRMATION`.
-5. Manter `Source modifications allowed: NO` ate resposta afirmativa explicita.
+5. Manter `Modificações no código-fonte permitidas: NO` até resposta afirmativa explícita.
 
 ### Fase 3
 
-1. Ao receber confirmacao, registrar `Human confirmation for Phase 3: APPROVED` e `Source modifications allowed: YES`.
+1. Ao receber confirmação, registrar `Confirmação humana para a Fase 3: APPROVED` e `Modificações no código-fonte permitidas: YES`.
 2. Salvar plano em `refactor-plan.md`.
-3. Registrar em `Findings Coverage` uma decisao para cada finding aprovado do relatorio.
+3. Registrar em `Cobertura dos Achados` uma decisão para cada achado aprovado do relatório.
 4. Salvar tarefas em `refactor-tasks.md` e espelhar a tabela no `STATE.md`.
 5. Antes de cada tarefa, marcar `IN_PROGRESS`.
-6. Apos cada tarefa, registrar arquivos alterados, validacao executada e status.
+6. Após cada tarefa, registrar arquivos alterados, validação executada e status.
 7. Em falha, marcar `FAILED`, registrar erro e decidir se corrige, pula com justificativa ou bloqueia.
-8. Salvar validacao final em `validation-report.md`.
+8. Salvar validação final em `validation-report.md`.
 
 ## Retomada
 
-Ao retomar uma execucao:
+Ao retomar uma execução:
 
-1. Ler `STATE.md` antes de qualquer outra acao.
+1. Ler `STATE.md` antes de qualquer outra ação.
 2. Verificar se os artefatos apontados em `STATE.md` existem.
-3. Conferir `git status` ou equivalente para entender mudancas ja aplicadas.
-4. Se `Source modifications allowed` for `NO`, nao editar codigo.
-5. Se a fase estiver `WAITING_CONFIRMATION`, pedir confirmacao novamente, salvo se a conversa atual ja contiver aprovacao explicita.
-6. Retomar a primeira tarefa `PENDING` ou `FAILED` sem reexecutar tarefas `COMPLETED`, a menos que o usuario peca rerun.
+3. Conferir `git status` ou equivalente para entender mudanças já aplicadas.
+4. Se `Modificações no código-fonte permitidas` for `NO`, não editar código.
+5. Se a fase estiver `WAITING_CONFIRMATION`, pedir confirmação novamente, salvo se a conversa atual já contiver aprovação explícita.
+6. Retomar a primeira tarefa `PENDING` ou `FAILED` sem reexecutar tarefas `COMPLETED`, a menos que o usuário peça reexecução.
 7. Atualizar `STATE.md` antes de encerrar a resposta final.
