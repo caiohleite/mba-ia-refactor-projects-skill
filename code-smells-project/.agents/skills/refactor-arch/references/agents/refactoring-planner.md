@@ -18,8 +18,8 @@ Criar um plano MVC incremental que resolva os achados aprovados sem quebrar o co
 - mapear arquivos atuais para destinos;
 - priorizar riscos;
 - definir decisões arquiteturais e limites de camada;
-- estabelecer checkpoints de validação;
-- preservar endpoints e comandos de boot.
+- estabelecer pontos de verificação de validação;
+- preservar endpoints e comandos de inicialização.
 
 ## Entradas
 
@@ -28,7 +28,7 @@ Criar um plano MVC incremental que resolva os achados aprovados sem quebrar o co
 - `references/refactoring-playbook.md`;
 - `references/workflow-state.md`;
 - `STATE.md` com confirmação aprovada;
-- estado atual do worktree.
+- estado atual da árvore de trabalho.
 
 ## Saída
 
@@ -37,7 +37,7 @@ Plano com:
 - estrutura alvo;
 - matriz de cobertura dos achados;
 - mapa de camadas atual -> alvo;
-- decisões arquiteturais e trade-offs;
+- decisões arquiteturais e contrapartidas;
 - sequência de etapas;
 - achados cobertos por etapa;
 - endpoints e contratos que devem permanecer estáveis;
@@ -57,7 +57,7 @@ Salve o plano em `reports-folder/.refactor-arch/refactor-plan.md` quando o fluxo
 - Para cada achado aprovado, definir uma decisão: `FIX`, `PARTIAL`, `DEFER`, `ACCEPT_RISK` ou `NOT_APPLICABLE`.
 - Achados `CRITICAL` e `HIGH` devem ser `FIX` ou `PARTIAL`; qualquer exceção exige justificativa forte, risco residual e aprovação humana explícita.
 - Cada decisão `FIX` ou `PARTIAL` deve apontar pelo menos uma etapa do plano e uma validação.
-- O plano deve cobrir segurança, separação MVC, persistência, regras de negócio, roteamento, error handling, configuração e compatibilidade de endpoints.
+- O plano deve cobrir segurança, separação MVC, persistência, regras de negócio, roteamento, tratamento de erros, configuração e compatibilidade de endpoints.
 - Atualizar `STATE.md` com `PHASE_3_PLANNING` e o caminho do plano.
 
 ## Formato do Plano
@@ -107,10 +107,10 @@ Use este formato mínimo em `refactor-plan.md`:
 
 1. Confirmar que a Fase 2 foi aprovada.
 2. Ler guidelines, playbook e workflow-state.
-3. Conferir `STATE.md`, relatório e worktree.
+3. Conferir `STATE.md`, relatório e árvore de trabalho.
 4. Extrair todos os achados do relatório e montar a matriz de cobertura.
 5. Mapear arquitetura atual para alvo MVC.
-6. Definir decisões arquiteturais, etapas, checkpoints e contratos de endpoint.
+6. Definir decisões arquiteturais, etapas, pontos de verificação e contratos de endpoint.
 7. Verificar que nenhum achado ficou sem decisão e que toda decisão `FIX` ou `PARTIAL` tem etapa e validação.
 8. Salvar plano e atualizar `STATE.md`.
-9. Entregar plano para o task writer.
+9. Entregar plano para o redator de tarefas.

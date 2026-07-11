@@ -1,6 +1,6 @@
-# Playbook de Refatoração
+# Guia de Refatoração
 
-Use este playbook na Fase 3. Aplique somente os padrões relacionados aos achados aprovados. Os exemplos são ilustrativos; adapte nomes e idioms à stack atual.
+Use este guia na Fase 3. Aplique somente os padrões relacionados aos achados aprovados. Os exemplos são ilustrativos; adapte nomes e padrões idiomáticos à stack atual.
 
 ## 1. Extrair Configuração e Segredos
 
@@ -21,7 +21,7 @@ class Settings:
     DEBUG = os.getenv("FLASK_DEBUG", "false").lower() == "true"
 ```
 
-Regra: substituir valores sensíveis por variáveis de ambiente e defaults seguros para desenvolvimento. Nunca retornar segredos em healthcheck.
+Regra: substituir valores sensíveis por variáveis de ambiente e valores padrão seguros para desenvolvimento. Nunca retornar segredos em endpoints de saúde.
 
 ## 2. Trocar SQL Concatenado por Parâmetros
 
@@ -37,9 +37,9 @@ cursor.execute("SELECT * FROM usuarios WHERE email = '" + email + "'")
 cursor.execute("SELECT * FROM usuarios WHERE email = ?", (email,))
 ```
 
-Regra: toda entrada externa deve passar por binding de parâmetros, ORM seguro ou query builder.
+Regra: toda entrada externa deve passar por vinculação de parâmetros, ORM seguro ou construtor de consultas.
 
-## 3. Afinar Routes e Controllers
+## 3. Afinar Rotas e Controllers
 
 **Antes**
 
@@ -64,9 +64,9 @@ async function create(req, res, next) {
 }
 ```
 
-Regra: route registra endpoint; controller adapta HTTP; service executa caso de uso.
+Regra: a rota registra endpoint; o controller adapta HTTP; o service executa o caso de uso.
 
-## 4. Dividir God Object por Domínio
+## 4. Dividir Objeto Deus por Domínio
 
 **Antes**
 
@@ -90,9 +90,9 @@ repositories/courseRepository.js
 repositories/paymentRepository.js
 ```
 
-Regra: separar bootstrap, rotas, controllers, services e repositories. Mover um domínio por vez.
+Regra: separar inicialização, rotas, controllers, services e repositories. Mover um domínio por vez.
 
-## 5. Remover N+1 Queries
+## 5. Remover N+1 Consultas
 
 **Antes**
 
@@ -150,7 +150,7 @@ def to_public_dict(self):
 
 Regra: separar representação interna de resposta pública. Nunca serializar senha, token, cartão ou segredo.
 
-## 8. Centralizar Error Handling
+## 8. Centralizar Tratamento de Erros
 
 **Antes**
 
@@ -190,9 +190,9 @@ def validate_status(status):
         raise ValidationError("Status inválido")
 ```
 
-Regra: validações repetidas pertencem a validators, schemas ou objetos de domínio.
+Regra: validações repetidas pertencem a validadores, schemas ou objetos de domínio.
 
-## 10. Modernizar APIs Deprecated
+## 10. Modernizar APIs Obsoletas
 
 **Antes**
 
@@ -206,37 +206,37 @@ user = User.query.get(user_id)
 user = db.session.get(User, user_id)
 ```
 
-Regra: trocar APIs deprecated quando a versão da stack confirmar suporte ao equivalente moderno. Se a troca afetar muitos pontos, aplicar em etapa isolada e validar.
+Regra: trocar APIs obsoletas quando a versão da stack confirmar suporte ao equivalente moderno. Se a troca afetar muitos pontos, aplicar em etapa isolada e validar.
 
 ## Ordem Recomendada
 
-1. Criar config e error handling.
-2. Extrair repositories/model access sem mudar contrato.
-3. Extrair services com regras de negocio.
-4. Afinar controllers e routes.
+1. Criar configuração e tratamento de erros.
+2. Extrair repositories/acesso a models sem mudar contrato.
+3. Extrair services com regras de negócio.
+4. Afinar controllers e rotas.
 5. Corrigir segurança crítica.
-6. Otimizar N+1 e duplicacoes.
-7. Modernizar deprecated APIs.
+6. Otimizar N+1 e duplicações.
+7. Modernizar APIs obsoletas.
 8. Rodar validação completa.
 
-## Mapeamento de Anti-Patterns para Transformações
+## Mapeamento de Antipadrões para Transformações
 
 Use esta tabela para montar a matriz de cobertura do plano:
 
-| Anti-pattern | Padrões principais | Observações |
+| Antipadrão | Padrões principais | Observações |
 |---|---|---|
-| AP-01 SQL Injection | 2, 4 | Corrigir antes de mover grandes blocos quando houver input externo ativo |
-| AP-02 Segredos hardcoded | 1, 7 | Remover de código, respostas e logs |
-| AP-03 Endpoint administrativo sem proteção | 3, 8 | Exigir auth/autorização ou remover recurso perigoso com aprovação |
-| AP-04 God class/file/method | 3, 4, 8 | Dividir por domínio e por camada |
-| AP-05 Regra pesada em route/controller | 3, 4, 9 | Extrair use cases/services e validadores |
-| AP-06 Persistência misturada com domínio | 2, 4 | Introduzir repositories/data access e transações explícitas |
+| AP-01 Injeção de SQL | 2, 4 | Corrigir antes de mover grandes blocos quando houver entrada externa ativa |
+| AP-02 Segredos fixados no código | 1, 7 | Remover de código, respostas e logs |
+| AP-03 Endpoint administrativo sem proteção | 3, 8 | Exigir autenticação/autorização ou remover recurso perigoso com aprovação |
+| AP-04 Classe/arquivo/método Deus | 3, 4, 8 | Dividir por domínio e por camada |
+| AP-05 Regra pesada em rota/controller | 3, 4, 9 | Extrair casos de uso/services e validadores |
+| AP-06 Persistência misturada com domínio | 2, 4 | Introduzir repositories/acesso a dados e transações explícitas |
 | AP-07 Criptografia/senha insegura | 6, 7 | Migrar hash e DTO com cuidado para não quebrar login |
 | AP-08 Vazamento de dados sensíveis | 1, 7, 8 | Criar DTO público e sanitizar logs/erros |
-| AP-09 N+1 queries | 5 | Trocar loops com query por join/eager loading/lote |
+| AP-09 N+1 consultas | 5 | Trocar loops com consulta por join/eager loading/lote |
 | AP-10 Estado global mutável | 1, 4 | Encapsular ciclo de vida e injetar dependências |
 | AP-11 Validação espalhada | 9 | Centralizar constantes, schemas ou validadores |
-| AP-12 Error handling inconsistente | 8 | Mapear erros de domínio e infraestrutura |
-| AP-13 APIs deprecated | 10 | Modernizar em etapa isolada e validar versão da stack |
-| AP-14 Nomes obscuros/magic values | 9 | Corrigir junto da camada tocada, evitando refactor cosmético amplo |
-| AP-15 Imports mortos/resíduos | 8, 9 | Limpar no final para reduzir risco |
+| AP-12 Tratamento de erros inconsistente | 8 | Mapear erros de domínio e infraestrutura |
+| AP-13 APIs obsoletas | 10 | Modernizar em etapa isolada e validar versão da stack |
+| AP-14 Nomes obscuros/valores mágicos | 9 | Corrigir junto da camada tocada, evitando refatoração cosmética ampla |
+| AP-15 Importações mortas/resíduos | 8, 9 | Limpar no final para reduzir risco |

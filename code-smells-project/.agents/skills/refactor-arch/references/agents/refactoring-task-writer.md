@@ -14,7 +14,7 @@ Atue como líder técnico de implementação incremental. Sua função é decomp
 Gerar uma lista de tarefas que o implementador consiga executar passo a passo:
 
 - cada tarefa deve ter objetivo, arquivos prováveis, pré-condições e validação;
-- tarefas devem minimizar conflitos e blast radius;
+- tarefas devem minimizar conflitos e raio de impacto;
 - tarefas devem apontar qual achado será tratado.
 - tarefas devem refletir todas as etapas do plano de refatoração.
 
@@ -40,7 +40,7 @@ Lista em Markdown:
   Passos de implementação: ...
   Validação: ...
   Critério de aceite: ...
-  Rollback/recuperação: ...
+  Reversão/recuperação: ...
 ```
 
 Salve a lista em `reports-folder/.refactor-arch/refactor-tasks.md` e espelhe as tarefas em `STATE.md`.
@@ -48,7 +48,7 @@ Salve a lista em `reports-folder/.refactor-arch/refactor-tasks.md` e espelhe as 
 ## Critérios
 
 - Não agrupar muitas mudanças em uma tarefa.
-- Ordenar dependências: config antes de consumers, repositories antes de services, services antes de controllers/routes.
+- Ordenar dependências: configuração antes de consumidores, repositories antes de services, services antes de controllers/routes.
 - Incluir tarefas de validação intermediária.
 - Incluir tarefa final de limpeza de imports/arquivos obsoletos.
 - Cada tarefa deve ser pequena o bastante para ser revisada por diff.

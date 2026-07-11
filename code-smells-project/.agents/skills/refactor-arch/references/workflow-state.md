@@ -17,7 +17,7 @@ reports-folder/
     `-- validation-report.md
 ```
 
-Antes da confirmação da Fase 2, somente estes artefatos de fluxo de trabalho e o relatório de auditoria podem ser criados ou atualizados. Código-fonte, manifests, lockfiles, configuração da aplicação e banco de dados não devem ser alterados antes da confirmação explícita.
+Antes da confirmação da Fase 2, somente estes artefatos de fluxo de trabalho e o relatório de auditoria podem ser criados ou atualizados. Código-fonte, arquivos de manifesto, lockfiles, configuração da aplicação e banco de dados não devem ser alterados antes da confirmação explícita.
 
 ## STATE.md
 
@@ -26,7 +26,7 @@ Antes da confirmação da Fase 2, somente estes artefatos de fluxo de trabalho e
 Modelo:
 
 ```markdown
-# Estado da Refactor Arch - [NOME_DO_PROJETO]
+# Estado da Refatoração Arquitetural - [NOME_DO_PROJETO]
 
 Gerado em: [YYYY-MM-DD HH:MM:SS]
 Última atualização: [YYYY-MM-DD HH:MM:SS]
@@ -61,7 +61,7 @@ Gerado em: [YYYY-MM-DD HH:MM:SS]
 ## Cobertura dos Achados
 | ID do achado | Severidade | Decisão | Etapa do plano | IDs das tarefas | Validação | Observações |
 |---|---|---|---|---|---|---|
-| AP-XX | HIGH | FIX | P02 | T03,T04 | smoke/test/verificação | observações |
+| AP-XX | HIGH | FIX | P02 | T03,T04 | teste de fumaça/teste/verificação | observações |
 
 ## Tarefas de Refatoração
 | ID | Status | Etapa do plano | IDs dos achados | Arquivos | Validação | Observações |

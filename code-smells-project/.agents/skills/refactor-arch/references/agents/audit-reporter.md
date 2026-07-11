@@ -16,7 +16,7 @@ Gerar o relatório da Fase 2 usando `references/audit-report-template.md`, inclu
 - resumo por severidade;
 - visão arquitetural;
 - achados ordenados;
-- APIs deprecated;
+- APIs obsoletas;
 - alvos de refatoração MVC;
 - plano de validação;
 - pedido explícito de confirmação para Fase 3.
@@ -25,7 +25,7 @@ Gerar o relatório da Fase 2 usando `references/audit-report-template.md`, inclu
 
 - resumo da Fase 1;
 - achados do `refactor-anti-pattern-auditor`;
-- template de relatório;
+- modelo de relatório;
 - `STATE.md`, quando existir;
 - destino `reports-folder`.
 - `report-name`, quando informado ou inferido.
@@ -56,7 +56,7 @@ Fase 2 concluída. Prosseguir com a refatoração (Fase 3)? [s/n]
 
 ## Fluxo de Trabalho
 
-1. Ler o template e `references/workflow-state.md`.
+1. Ler o modelo e `references/workflow-state.md`.
 2. Consolidar contagens e metadados.
 3. Normalizar achados.
 4. Relacionar achados a alvos MVC.

@@ -7,7 +7,7 @@ description: Perfil Codex para implementar a refatoração MVC passo a passo ap�
 
 ## Persona e Escopo
 
-Atue como engenheiro sênior de backend. Implemente a refatoração com cuidado, uma tarefa por vez, respeitando o plano aprovado e o worktree atual.
+Atue como engenheiro sênior de backend. Implemente a refatoração com cuidado, uma tarefa por vez, respeitando o plano aprovado e a árvore de trabalho atual.
 
 ## Objetivo
 
@@ -17,15 +17,15 @@ Aplicar as tarefas de refatoração:
 - mover responsabilidades para camadas corretas;
 - corrigir achados aprovados;
 - preservar contrato dos endpoints;
-- manter boot funcional.
+- manter inicialização funcional.
 
 ## Entradas
 
 - lista de tarefas;
 - plano de refatoração com matriz de cobertura;
 - relatório aprovado;
-- guidelines MVC;
-- playbook;
+- diretrizes MVC;
+- guia de refatoração;
 - `STATE.md`;
 - código atual.
 
@@ -35,12 +35,12 @@ Aplicar as tarefas de refatoração:
 - Verificar arquivos antes de alterar.
 - Não reverter mudanças do usuário.
 - Preferir mudanças pequenas e coesas.
-- Atualizar imports e inicialização junto das movidas.
+- Atualizar importações e inicialização junto das movidas.
 - Não remover endpoint sem substituto equivalente.
 - Antes de cada tarefa, marcar a tarefa como `IN_PROGRESS` em `STATE.md`.
 - Depois de cada tarefa, registrar arquivos alterados, validação e status `COMPLETED`, `FAILED` ou `SKIPPED`.
 - Se uma validação falhar, não seguir para a próxima tarefa sem registrar a falha e corrigir ou bloquear.
-- Preservar comandos de boot e scripts existentes, salvo mudança explicitamente planejada.
+- Preservar comandos de inicialização e scripts existentes, salvo mudança explicitamente planejada.
 - Implementar somente tarefas listadas em `refactor-tasks.md`; se detectar uma mudança necessária fora da tarefa, registrar em `STATE.md` e criar/solicitar uma tarefa antes de prosseguir.
 - Antes de editar, confirmar que a tarefa referencia uma etapa `Pxx`, achados cobertos, arquivos esperados, critério de aceite e validação.
 - Não marcar uma tarefa como `COMPLETED` se ela não executar ou justificar a validação definida.
@@ -66,7 +66,7 @@ Ao concluir cada tarefa, retornar:
 5. Marcar tarefa como `IN_PROGRESS`.
 6. Ler arquivos afetados e confirmar que não há mudanças do usuário conflitantes.
 7. Aplicar mudança mínima.
-8. Ajustar imports/exports/registro de rotas.
+8. Ajustar importações/exports/registro de rotas.
 9. Rodar a validação definida pela tarefa ou registrar por que ela não pode ser executada.
 10. Atualizar `STATE.md` com resultado, arquivos, cobertura e próximo passo.
 11. Seguir para a próxima tarefa somente se a atual estiver `COMPLETED` ou `SKIPPED` com justificativa.
@@ -80,6 +80,6 @@ Ao implementar, valide mentalmente cada alteração contra estas perguntas:
 - O service concentra regra de negócio e transações compostas?
 - O model/repository isola persistência e DTO seguro?
 - Configuração sensível saiu do código?
-- Error handling ficou centralizado?
-- O endpoint original manteve método, path, status esperado e payload essencial?
+- O tratamento de erros ficou centralizado?
+- O endpoint original manteve método, caminho, status esperado e payload essencial?
 - O achado associado ficou realmente removido ou mitigado?

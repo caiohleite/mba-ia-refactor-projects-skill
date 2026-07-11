@@ -1,14 +1,14 @@
 ---
 name: refactor-arch
-description: Analisa, audita e refatora codebases legadas de backend para o padrão MVC, de forma agnóstica de tecnologia. Use quando Codex precisar detectar stack e arquitetura atual, identificar anti-patterns e code smells com severidade e linhas exatas, gerar relatório de auditoria, pausar para confirmação humana, reestruturar para Model-View-Controller e validar boot/endpoints após as mudanças em projetos Python/Flask, Node.js/Express ou stacks similares.
+description: Analisa, audita e refatora bases de código legadas de backend para o padrão MVC, de forma agnóstica de tecnologia. Use quando Codex precisar detectar stack e arquitetura atual, identificar antipadrões e code smells com severidade e linhas exatas, gerar relatório de auditoria, pausar para confirmação humana, reestruturar para Model-View-Controller e validar inicialização/endpoints após as mudanças em projetos Python/Flask, Node.js/Express ou stacks similares.
 ---
 
-# Refactor Arch
+# Refatoração Arquitetural
 
 Use esta skill para executar um fluxo completo de modernização arquitetural orientado a MVC. A execução possui três fases sequenciais e obrigatórias:
 
 1. **Análise**: detectar linguagem, framework, banco de dados, domínio, arquivos relevantes e arquitetura atual.
-2. **Auditoria**: cruzar o código contra o catálogo de anti-patterns, classificar severidade, gerar relatório e pedir confirmação.
+2. **Auditoria**: cruzar o código contra o catálogo de antipadrões, classificar severidade, gerar relatório e pedir confirmação.
 3. **Refatoração**: somente após confirmação, reorganizar o projeto para MVC e validar que a aplicação continua funcionando.
 
 ## Recursos
@@ -16,11 +16,11 @@ Use esta skill para executar um fluxo completo de modernização arquitetural or
 Leia apenas os recursos necessários para a fase atual:
 
 - `references/project-analysis.md`: heurísticas da Fase 1 para detectar stack, domínio, banco de dados e arquitetura.
-- `references/anti-pattern-catalog.md`: catálogo da Fase 2 com severidades, sinais de detecção e recomendações.
+- `references/anti-pattern-catalog.md`: catálogo de antipadrões da Fase 2 com severidades, sinais de detecção e recomendações.
 - `references/audit-report-template.md`: formato obrigatório do relatório de auditoria.
 - `references/mvc-guidelines.md`: arquitetura MVC alvo, responsabilidades por camada e variações por stack.
 - `references/refactoring-playbook.md`: transformações concretas com exemplos antes/depois.
-- `references/validation-checklist.md`: validação de boot, endpoints, testes e regressão arquitetural.
+- `references/validation-checklist.md`: validação de inicialização, endpoints, testes e regressão arquitetural.
 - `references/workflow-state.md`: artefatos de estado, checkpoints, retomada e controle de tarefas.
 - `references/agents/*.md`: perfis especializados dos agentes da skill.
 
@@ -28,10 +28,10 @@ Leia apenas os recursos necessários para a fase atual:
 
 Cada objetivo principal da skill possui um agente dedicado. Antes de executar uma fase no agente principal ou delegar para subagentes, leia o perfil correspondente:
 
-| Objetivo | Perfil | Agente customizado |
+| Objetivo | Perfil | Agente personalizado |
 |---|---|---|
-| Analisar codebase e arquitetura atual | `references/agents/project-analyzer.md` | `refactor-project-analyzer` |
-| Identificar anti-patterns e code smells | `references/agents/anti-pattern-auditor.md` | `refactor-anti-pattern-auditor` |
+| Analisar base de código e arquitetura atual | `references/agents/project-analyzer.md` | `refactor-project-analyzer` |
+| Identificar antipadrões e code smells | `references/agents/anti-pattern-auditor.md` | `refactor-anti-pattern-auditor` |
 | Gerar relatório estruturado e pedido de confirmação | `references/agents/audit-reporter.md` | `refactor-audit-reporter` |
 | Planejar refatoração MVC | `references/agents/refactoring-planner.md` | `refactor-planner` |
 | Quebrar plano em tarefas executáveis | `references/agents/refactoring-task-writer.md` | `refactor-task-writer` |
@@ -48,7 +48,7 @@ Extraia estes parâmetros do pedido do usuário:
 - `reports-folder`: destino do relatório. Padrão: `reports` relativo ao repositório ou ao projeto.
 - `report-name`: nome do relatório de auditoria. Padrão: `audit-[nome-do-projeto].md`; nos projetos do desafio, usar `audit-project-1.md`, `audit-project-2.md` ou `audit-project-3.md` quando o projeto for reconhecido.
 - `ignore-folders`: pastas e arquivos a ignorar. Sempre incluir `.git`, dependências vendorizadas, caches e artefatos gerados.
-- `validation-base-url`: URL local para smoke tests, quando informada.
+- `validation-base-url`: URL local para testes de fumaça, quando informada.
 
 Se o escopo não tiver código-fonte detectável, peça o caminho correto antes de prosseguir.
 
@@ -57,16 +57,16 @@ Se o escopo não tiver código-fonte detectável, peça o caminho correto antes 
 Leia `references/workflow-state.md` antes de iniciar a Fase 1 ou retomar uma execução existente.
 
 - Crie e mantenha `reports-folder/.refactor-arch/STATE.md` como fonte de verdade do fluxo de trabalho.
-- Antes da confirmação da Fase 2, somente artefatos de fluxo de trabalho e relatórios podem ser criados ou atualizados; não edite código-fonte, manifests, lockfiles, configuração da aplicação ou banco.
+- Antes da confirmação da Fase 2, somente artefatos de fluxo de trabalho e relatórios podem ser criados ou atualizados; não edite código-fonte, arquivos de manifesto, lockfiles, configuração da aplicação ou banco.
 - Atualize `STATE.md` ao iniciar e concluir cada fase, antes e depois de cada tarefa da Fase 3, e sempre que houver erro, bloqueio ou decisão humana.
 - Registre contratos de endpoints detectados, caminhos de artefatos, achados por severidade, status das tarefas, comandos de validação e próximo passo.
 - Ao retomar, leia `STATE.md` primeiro e continue da primeira fase ou tarefa `PENDING` ou `FAILED`.
 
 ## Regras de Segurança
 
-- Não altere código-fonte, manifests, lockfiles, configuração da aplicação ou banco antes de concluir a Fase 2 e receber confirmação explícita do usuário; antes disso, crie ou atualize somente artefatos de fluxo de trabalho e relatórios.
-- Antes de editar, verifique o estado do worktree e preserve mudanças preexistentes.
-- Mantenha endpoints, contratos HTTP, comandos de boot e comportamento observável, salvo quando o relatório e a confirmação aprovarem mudança específica.
+- Não altere código-fonte, arquivos de manifesto, lockfiles, configuração da aplicação ou banco antes de concluir a Fase 2 e receber confirmação explícita do usuário; antes disso, crie ou atualize somente artefatos de fluxo de trabalho e relatórios.
+- Antes de editar, verifique o estado da árvore de trabalho e preserve mudanças preexistentes.
+- Mantenha endpoints, contratos HTTP, comandos de inicialização e comportamento observável, salvo quando o relatório e a confirmação aprovarem mudança específica.
 - Nunca invente achados. Cada achado deve citar arquivo e linha exatos ou declarar que a evidência é estrutural e explicar como foi inferida.
 - Não remover funcionalidade para facilitar a refatoração.
 - Não executar comandos destrutivos. Para limpeza, prefira remover apenas artefatos claramente gerados pela própria validação e peça confirmação quando houver risco.
@@ -74,7 +74,7 @@ Leia `references/workflow-state.md` antes de iniciar a Fase 1 ou retomar uma exe
 ## Fase 1: Análise
 
 1. Leia `references/project-analysis.md`, `references/workflow-state.md` e `references/agents/project-analyzer.md`.
-2. Inventarie arquivos de código, manifests, rotas, schemas, configurações, testes e scripts de execução.
+2. Inventarie arquivos de código, arquivos de manifesto, rotas, schemas, configurações, testes e scripts de execução.
 3. Detecte linguagem, framework, banco de dados, domínio da aplicação, padrão arquitetural atual e contagem de arquivos analisados.
 4. Mapeie camadas reais, não apenas nomes de pastas. Um projeto com `routes/`, `models/` ou `services/` ainda pode violar MVC.
 5. Salve a análise em `reports-folder/.refactor-arch/phase-1-analysis.md` e atualize `STATE.md`.
@@ -119,19 +119,19 @@ Execute esta fase somente após confirmação.
 2. Gere um plano de refatoração baseado nos achados aprovados e na arquitetura alvo. O plano deve conter uma matriz de cobertura ligando cada achado do relatório a uma decisão: `FIX`, `PARTIAL`, `DEFER`, `ACCEPT_RISK` ou `NOT_APPLICABLE`, sempre com justificativa.
 3. Salve o plano em `reports-folder/.refactor-arch/refactor-plan.md` e atualize `STATE.md`.
 4. Não avance para tarefas enquanto houver achado aprovado sem decisão, sem tarefa associada ou sem justificativa explícita.
-5. Quebre o plano em tarefas pequenas, ordenadas por menor risco: configuração, models/repositories, controllers/services, routes/views, middlewares, bootstrap e validação.
+5. Quebre o plano em tarefas pequenas, ordenadas por menor risco: configuração, models/repositories, controllers/services, routes/views, middlewares, inicialização e validação.
 6. Cada tarefa deve apontar quais etapas do plano e quais achados cobre, quais arquivos provavelmente altera, quais referências usar, critério de aceite e validação local.
 7. Salve as tarefas em `reports-folder/.refactor-arch/refactor-tasks.md` e espelhe seus status no `STATE.md`.
 8. Implemente uma tarefa por vez, marcando `IN_PROGRESS` antes de editar e `COMPLETED`, `FAILED` ou `SKIPPED` após validar.
-9. Verifique imports, caminhos, inicialização, contrato dos endpoints originais e compatibilidade dos payloads/respostas.
-10. Extraia configuração sensível para variáveis de ambiente ou módulo de configuração com defaults seguros para desenvolvimento.
+9. Verifique importações, caminhos, inicialização, contrato dos endpoints originais e compatibilidade dos payloads/respostas.
+10. Extraia configuração sensível para variáveis de ambiente ou módulo de configuração com valores padrão seguros para desenvolvimento.
 11. Separe responsabilidades:
    - Models representam dados, schemas e persistência.
    - Views/Routes expõem HTTP e serialização.
    - Controllers coordenam fluxo de caso de uso.
    - Services concentram regras de negócio quando o domínio exigir.
-   - Middlewares tratam erros, auth, logging e concerns transversais.
-12. Valide boot da aplicação, endpoints originais, redução dos anti-patterns encontrados e cobertura final de todos os achados.
+   - Middlewares tratam erros, autenticação, registro de logs e preocupações transversais.
+12. Valide inicialização da aplicação, endpoints originais, redução dos antipadrões encontrados e cobertura final de todos os achados.
 13. Salve `reports-folder/.refactor-arch/validation-report.md` e atualize `STATE.md`.
 14. Gere um resumo final com nova estrutura, comandos executados e limitações.
 
@@ -141,7 +141,7 @@ Se o fluxo for interrompido:
 
 1. Leia `reports-folder/.refactor-arch/STATE.md` antes de qualquer outra ação.
 2. Verifique se os artefatos registrados no estado existem.
-3. Confira o diff/worktree atual antes de decidir a próxima tarefa.
+3. Confira o diff/árvore de trabalho atual antes de decidir a próxima tarefa.
 4. Retome da primeira fase ou tarefa `PENDING` ou `FAILED`.
 5. Não reexecute tarefas `COMPLETED` sem pedido explícito do usuário.
 6. Se `Modificações no código-fonte permitidas` estiver `NO`, não edite código.

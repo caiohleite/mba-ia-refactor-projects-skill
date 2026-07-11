@@ -1,4 +1,4 @@
-# Template de Relatório de Auditoria
+# Modelo de Relatório de Auditoria
 
 Use este formato na Fase 2. O relatório deve ser salvo em Markdown e também resumido na conversa. Os achados devem estar ordenados por severidade: `CRITICAL`, `HIGH`, `MEDIUM`, `LOW`.
 
@@ -61,10 +61,10 @@ Liste APIs obsoletas/legadas encontradas, ou declare: "Nenhum uso de API obsolet
 
 ## Plano de Validação para a Fase 3
 
-- Comando de boot: `[comando]`
-- Endpoints de smoke test: `[método caminho]`
+- Comando de inicialização: `[comando]`
+- Endpoints de testes de fumaça: `[método caminho]`
 - Comando de testes: `[comando ou não encontrado]`
-- Preparação de dados: `[requisito de seed/migration]`
+- Preparação de dados: `[requisito de seed/migração]`
 - Arquivo de estado: `[reports-folder/.refactor-arch/STATE.md]`
 
 ## Pré-condições da Fase 3
