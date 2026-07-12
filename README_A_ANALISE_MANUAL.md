@@ -1,0 +1,41 @@
+
+**Análise Manual**
+
+
+- **code-smells-project**
+    - CRITICAL: 
+        - Senhas expostas em endpoint desprotegido
+        - SQL Injection possível no endpoint /query
+        - SECRET\_KEY cravada no código
+        - rotas para rotinas administrativas críticas completamente desprotegidas
+    - HIGH
+        - regras de negocio em controller (ex: criar produto)
+    - MEDIUM:
+        - código de validação/criação de produto duplicado (metodos criar\_produto e atualizar\_produto)
+        - queries duplicadas em criar\_pedido
+    - LOW:
+        - valores de dominio cravados em controllers.py
+- **ecommerce-api-legacy**
+    - CRITICAL
+        - senhas expostas no código em utils.js
+        - endpoints críticos expostos sem proteção
+    - HIGH
+        - AppManager é God Class, com toda lógica concentrada nela
+    - MEDIUM
+        - consultas N+1 no relatorio financeiro (poderia usar JOIN)
+        - Não há validação para exclusão de usuario que tenha matricula/pagamento
+    - LOW
+        - nomes pouco significativos para variaveis (ex: u, e, p, etc)
+- **task-manager-api**
+    - CRITICAL
+        - senhas expostas no código-fonte (carga de dados em seed.py)
+        - secret cravado no código em app.py
+        - endpoint expõe senhas de usuários
+        - endpoint de usuarios desprotegido
+    - HIGH
+        - lógica de negocio nas classes de rotas
+    - MEDIUM
+        - endpoints de /categories esta junto com /reports, deveria estar em arquivo separado
+        - contagem de dados dentro de loop  (report\_routes.py:163)
+    - LOW
+        - nomes pouco significativos para variaveis (ex: u, e, p, etc)
