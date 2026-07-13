@@ -1,6 +1,11 @@
 from database import db
-from datetime import datetime
 import hashlib
+import hmac
+import re
+
+from werkzeug.security import check_password_hash, generate_password_hash
+
+from utils.time import utc_now
 
 class User(db.Model):
     __tablename__ = 'users'
@@ -11,25 +16,19 @@ class User(db.Model):
     password = db.Column(db.String(255), nullable=False)
     role = db.Column(db.String(50), default='user')
     active = db.Column(db.Boolean, default=True)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
-
-    def to_dict(self):
-        return {
-            'id': self.id,
-            'name': self.name,
-            'email': self.email,
-            'password': self.password,
-            'role': self.role,
-            'active': self.active,
-            'created_at': str(self.created_at)
-        }
+    created_at = db.Column(db.DateTime, default=utc_now)
 
     def set_password(self, pwd):
-
-        self.password = hashlib.md5(pwd.encode()).hexdigest()
+        self.password = generate_password_hash(pwd)
 
     def check_password(self, pwd):
-        return self.password == hashlib.md5(pwd.encode()).hexdigest()
+        if self.has_legacy_password():
+            legacy_hash = hashlib.md5(pwd.encode()).hexdigest()
+            return hmac.compare_digest(self.password, legacy_hash)
+        return check_password_hash(self.password, pwd)
+
+    def has_legacy_password(self):
+        return bool(re.fullmatch(r"[a-f0-9]{32}", self.password or ""))
 
     def is_admin(self):
         if self.role == 'admin':
